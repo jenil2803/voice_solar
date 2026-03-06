@@ -6,8 +6,13 @@ import '../../../models/dashboard_models.dart';
 /// Displays energy generation bar chart with period selector.
 class EnergyGenerationChart extends StatefulWidget {
   final EnergyChartData data;
+  final Function(ChartPeriodType) onPeriodChanged;
 
-  const EnergyGenerationChart({super.key, required this.data});
+  const EnergyGenerationChart({
+    super.key,
+    required this.data,
+    required this.onPeriodChanged,
+  });
 
   @override
   State<EnergyGenerationChart> createState() => _EnergyGenerationChartState();
@@ -102,96 +107,123 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
           const SizedBox(height: 24),
           SizedBox(
             height: 250,
-            child: BarChart(
-              BarChartData(
-                alignment: BarChartAlignment.spaceAround,
-                maxY: isGenerationSelected ? widget.data.maxY : 1000,
-                barTouchData: BarTouchData(enabled: false),
-                titlesData: FlTitlesData(
-                  show: true,
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            value.toInt().toString(),
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 12),
-                          ),
-                        );
-                      },
-                      reservedSize: 28,
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 40,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          isGenerationSelected
-                              ? value.toInt().toString()
-                              : '${value.toInt()}',
-                          style:
-                              const TextStyle(color: Colors.grey, fontSize: 12),
-                        );
-                      },
-                    ),
-                  ),
-                  topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                ),
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: isGenerationSelected
-                      ? (widget.data.maxY / 4).clamp(1.0, double.infinity)
-                      : 250,
-                  getDrawingHorizontalLine: (value) => FlLine(
-                    color: const Color(0x339E9E9E),
-                    strokeWidth: 1,
-                    dashArray: [5, 5],
-                  ),
-                ),
-                borderData: FlBorderData(show: false),
-                barGroups: widget.data.bars.asMap().entries.map((e) {
-                  final isHighlight = e.key == widget.data.bars.length - 3;
-                  double y;
-                  if (isGenerationSelected) {
-                    y = e.value.y;
-                  } else {
-                    // Approximate revenue scaling if not provided by backend
-                    y = e.value.y * 25;
-                  }
-                  return BarChartGroupData(
-                    x: e.value.x,
-                    barRods: [
-                      BarChartRodData(
-                        toY: y,
-                        color: isHighlight
-                            ? const Color(0xFF3B82F6)
-                            : const Color(0xFFBAE6FD),
-                        width: 8,
-                        borderRadius: BorderRadius.circular(2),
+              child: BarChart(
+                BarChartData(
+                  alignment: BarChartAlignment.spaceAround,
+                  maxY: isGenerationSelected ? widget.data.maxY : widget.data.maxY * 8,
+                  barTouchData: BarTouchData(enabled: false),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) {
+                          String text = '';
+                          if (widget.data.periodType == ChartPeriodType.monthly) {
+                            // Show every 5 days to avoid clutter
+                            if (value.toInt() % 5 == 0 || value.toInt() == 1) {
+                              text = value.toInt().toString();
+                            }
+                          } else if (widget.data.periodType == ChartPeriodType.yearly) {
+                            final months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+                            if (value.toInt() >= 1 && value.toInt() <= 12) {
+                              text = months[value.toInt() - 1];
+                            }
+                          } else {
+                            text = value.toInt().toString();
+                          }
+  
+                          if (text.isEmpty) return const SizedBox.shrink();
+  
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 12.0),
+                            child: Text(
+                              text,
+                              style: const TextStyle(
+                                color: Color(0xFF64748B),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          );
+                        },
+                        reservedSize: 32,
                       ),
-                    ],
-                  );
-                }).toList(),
-              ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 44,
+                        getTitlesWidget: (value, meta) {
+                          if (value == 0) return const SizedBox.shrink();
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text(
+                              isGenerationSelected
+                                  ? value.toInt().toString()
+                                  : '${(value / 1000).toStringAsFixed(1)}k',
+                              style: const TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 10,
+                              ),
+                              textAlign: TextAlign.right,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  ),
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: isGenerationSelected
+                        ? (widget.data.maxY / 4).clamp(1.0, double.infinity)
+                        : 250,
+                    getDrawingHorizontalLine: (value) => FlLine(
+                      color: const Color(0xFFF1F5F9),
+                      strokeWidth: 1,
+                    ),
+                  ),
+                  borderData: FlBorderData(show: false),
+                  barGroups: widget.data.bars.map((e) {
+                    double y = isGenerationSelected ? e.y : e.y * 7.5; // Use seeded rate
+                    return BarChartGroupData(
+                      x: e.x,
+                      barRods: [
+                        BarChartRodData(
+                          toY: y,
+                          gradient: LinearGradient(
+                            colors: [
+                              const Color(0xFF0EA5E9),
+                              const Color(0xFF38BDF8),
+                            ],
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                          ),
+                          width: widget.data.periodType == ChartPeriodType.monthly ? 8 : 16,
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                          backDrawRodData: BackgroundBarChartRodData(
+                            show: true,
+                            toY: isGenerationSelected ? widget.data.maxY : 1000,
+                            color: const Color(0xFFF1F5F9),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
             ),
           ),
           if (!isGenerationSelected)
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
               child: Text(
-                'Total Revenue: ₹ 2,45,670',
-                style: TextStyle(
+                'Total Revenue: ₹ ${widget.data.bars.fold<double>(0, (sum, b) => sum + (b.y * 7.5)).toStringAsFixed(0)}',
+                style: const TextStyle(
                   color: Color(0xFF0EA5E9),
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -220,7 +252,7 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
     );
   }
 
-  Widget _buildToggleButtons(ChartPeriodType type) {
+  Widget _buildToggleButtons(ChartPeriodType currentType) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: const Color(0x339E9E9E)),
@@ -230,29 +262,32 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildToggleBtn('Monthly', type == ChartPeriodType.monthly),
-          _buildToggleBtn('Yearly', type == ChartPeriodType.yearly),
-          _buildToggleBtn('Lifetime', type == ChartPeriodType.lifetime),
+          _buildToggleBtn('Monthly', currentType == ChartPeriodType.monthly, () => widget.onPeriodChanged(ChartPeriodType.monthly)),
+          _buildToggleBtn('Yearly', currentType == ChartPeriodType.yearly, () => widget.onPeriodChanged(ChartPeriodType.yearly)),
+          _buildToggleBtn('Lifetime', currentType == ChartPeriodType.lifetime, () => widget.onPeriodChanged(ChartPeriodType.lifetime)),
         ],
       ),
     );
   }
 
-  Widget _buildToggleBtn(String label, bool isSelected) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: isSelected
-          ? BoxDecoration(
-              color: const Color(0xFFE0F2FE),
-              borderRadius: BorderRadius.circular(8),
-            )
-          : null,
-      child: Text(
-        label,
-        style: TextStyle(
-          color: isSelected ? const Color(0xFF0EA5E9) : Colors.grey,
-          fontSize: 12,
-          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+  Widget _buildToggleBtn(String label, bool isSelected, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: isSelected
+            ? BoxDecoration(
+                color: const Color(0xFFE0F2FE),
+                borderRadius: BorderRadius.circular(8),
+              )
+            : null,
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? const Color(0xFF0EA5E9) : Colors.grey,
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          ),
         ),
       ),
     );

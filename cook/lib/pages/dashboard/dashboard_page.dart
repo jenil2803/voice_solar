@@ -26,6 +26,7 @@ class _DashboardPageState extends State<DashboardPage> {
   DashboardData? _data;
   bool _isLoading = true;
   String? _error;
+  ChartPeriodType _currentPeriod = ChartPeriodType.monthly;
 
   @override
   void initState() {
@@ -33,9 +34,6 @@ class _DashboardPageState extends State<DashboardPage> {
     _loadData();
   }
 
-  /// Fetches dashboard data. Called on init and can be used for pull-to-refresh.
-  /// BACKEND: This triggers [DashboardService.getDashboardData] - replace that
-  /// method's implementation to call your MongoDB/API.
   Future<void> _loadData() async {
     setState(() {
       _isLoading = true;
@@ -43,7 +41,7 @@ class _DashboardPageState extends State<DashboardPage> {
     });
 
     try {
-      final data = await _dashboardService.getDashboardData();
+      final data = await _dashboardService.getDashboardData(period: _currentPeriod);
       if (mounted) {
         setState(() {
           _data = data;
@@ -58,6 +56,14 @@ class _DashboardPageState extends State<DashboardPage> {
         });
       }
     }
+  }
+
+  void _updatePeriod(ChartPeriodType period) {
+    if (_currentPeriod == period) return;
+    setState(() {
+      _currentPeriod = period;
+    });
+    _loadData();
   }
 
   @override
@@ -124,22 +130,54 @@ class _DashboardPageState extends State<DashboardPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Namaste, ${data.userName}!',
-                style: const TextStyle(
-                  color: Color(0xFF0EA5E9),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Solar Performance Overview',
-                style: TextStyle(
-                  color: Color(0xFF0EA5E9),
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Namaste, ${data.userName}!',
+                        style: TextStyle(
+                          color: const Color(0xFF64748B),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Solar Performance',
+                        style: TextStyle(
+                          color: Color(0xFF1E293B),
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          height: 1.1,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0EA5E9).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.calendar_today, size: 16, color: Color(0xFF0EA5E9)),
+                        const SizedBox(width: 8),
+                        Text(
+                          DateTime.now().toString().split(' ')[0], // Simple date
+                          style: const TextStyle(
+                            color: Color(0xFF0EA5E9),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 32),
 
@@ -178,7 +216,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                   ],
                                 ),
                                 const SizedBox(height: 24),
-                                EnergyGenerationChart(data: data.chartData),
+                                EnergyGenerationChart(
+                                  data: data.chartData,
+                                  onPeriodChanged: _updatePeriod,
+                                ),
                               ],
                             ),
                           ),

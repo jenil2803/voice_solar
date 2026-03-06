@@ -34,3 +34,9 @@ slms_data_collection = db["slms_data"]
 alert_collection = db["alerts"]
 
 export_collection = db["exports"]
+
+# New Dashboard Collections
+overview_collection = db["overview"]
+chart_data_collection = db["chart_data"]
+devices_collection = db["devices"]
+energy_logs_collection = db["energy_logs"]

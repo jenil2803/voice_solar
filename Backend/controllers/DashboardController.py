@@ -1,82 +1,121 @@
-from fastapi import APIRouter
-from config.database import plant_collection, inverter_collection, sensor_collection
+from datetime import datetime
+from config.database import (
+    user_collection, plant_collection, overview_collection, 
+    chart_data_collection, devices_collection, energy_logs_collection
+)
 
-async def getDashboardData():
-    # In a real production scenario, this function would run MongoDB aggregations
-    # across collection to return 'DashboardData'.
-    # For now, we will return a static dictionary matching the schema expected 
-    # by the `DashboardData` model in `cook/lib/models/dashboard_models.dart`.
+async def getDashboardData(period: str = "monthly"):
+    # 1. Fetch User
+    user = await user_collection.find_one({})
+    user_name = user.get("userName", "Guest") if user else "Guest"
     
-    # 1. Energy Production
-    energyProduction = {
-        "todayKwh": "20 kWh",
-        "percentage": 50.75,
-        "totalProduction": "42.8 kWh",
-        "totalCapacity": "42.8 kWh"
-    }
-    
-    # 2. Devices count
-    devices = [
-        {"type": "MFM", "count": 5, "flex": 5},
-        {"type": "WFM", "count": 1, "flex": 1},
-        {"type": "SLMS", "count": 2, "flex": 2},
-        {"type": "Inverters", "count": 4, "flex": 4}
-    ]
-    
-    # 3. Plants Status Data
-    plantsStatus = {
-        "totalPlants": 45,
-        "active": 30,
-        "alert": 10,
-        "partiallyActive": 10,
-        "expired": 10
-    }
-    
-    # 4. Net Zero
-    netZero = {
-        "co2Reduced": "1.03k",
-        "coalSaved": "1.4 T",
-        "treesPlanted": "155K"
-    }
-    
-    # 5. Chart Data
-    # Generate 22 points
-    bars = []
-    for i in range(22):
-        y = 38 if i == 19 else 20 + (i % 5) * 4
-        bars.append({"x": i + 1, "y": float(y)})
-        
-    chartData = {
-        "periodLabel": "September 2026",
-        "periodType": "yearly",
-        "bars": bars,
-        "maxY": 40.0
-    }
-    
-    # 6. Plants Details
-    plants = [
-        {
-            "name": "Kutch Plant",
-            "status": "partiallyActive",
-            "todayKwh": "36489 Kwh",
-            "totalKwh": "36489 Kwh",
-            "capacityKwh": "36489 Kwh",
-            "lastUpdated": "Jan 10, 8:00 AM"
+    # 2. Fetch Overview & Net Zero stats
+    overview = await overview_collection.find_one({"type": "dashboard_stats"})
+    if not overview:
+        # Fallback if not seeded
+        energyProduction = {
+            "todayKwh": "0 kWh",
+            "percentage": 0.0,
+            "totalProduction": "0 kWh",
+            "totalCapacity": "0 kWh"
         }
-    ]
-    # Add 5 more plants exactly as they are in dart code
-    for i in range(5):
+        netZero = {
+            "co2Reduced": "0",
+            "coalSaved": "0",
+            "treesPlanted": "0"
+        }
+        plantsStatus = {
+            "totalPlants": 0,
+            "active": 0,
+            "alert": 0,
+            "partiallyActive": 0,
+            "expired": 0
+        }
+    else:
+        energyProduction = overview.get("energyProduction")
+        netZero = overview.get("netZero")
+        plantsStatus = overview.get("plantsStatus")
+        
+    # 3. Fetch Devices
+    devices_cursor = devices_collection.find({})
+    devices = []
+    async for device in devices_cursor:
+        devices.append({
+            "type": device["type"],
+            "count": device["count"],
+            "flex": device["flex"]
+        })
+        
+    # 4. Dynamic Chart Data Aggregation
+    now = datetime.now()
+    bars = []
+    period_label = ""
+    max_y = 40.0
+    
+    if period == "monthly":
+        period_label = now.strftime("%B %Y")
+        cursor = energy_logs_collection.find({
+            "year": now.year,
+            "month": now.month
+        }).sort("day", 1)
+        async for log in cursor:
+            bars.append({"x": log["day"], "y": log["kwh"]})
+        if bars:
+            max_y = max([b["y"] for b in bars]) * 1.2
+            
+    elif period == "yearly":
+        period_label = str(now.year)
+        pipeline = [
+            {"$match": {"year": now.year}},
+            {"$group": {
+                "_id": "$month",
+                "total_kwh": {"$sum": "$kwh"}
+            }},
+            {"$sort": {"_id": 1}}
+        ]
+        cursor = energy_logs_collection.aggregate(pipeline)
+        async for res in cursor:
+            bars.append({"x": res["_id"], "y": round(res["total_kwh"], 2)})
+        if bars:
+            max_y = max([b["y"] for b in bars]) * 1.2
+            
+    elif period == "lifetime":
+        period_label = "Lifetime"
+        pipeline = [
+            {"$group": {
+                "_id": "$year",
+                "total_kwh": {"$sum": "$kwh"}
+            }},
+            {"$sort": {"_id": 1}}
+        ]
+        cursor = energy_logs_collection.aggregate(pipeline)
+        async for res in cursor:
+            bars.append({"x": res["_id"], "y": round(res["total_kwh"], 2)})
+        if bars:
+            max_y = max([b["y"] for b in bars]) * 1.2
+            
+    chartData = {
+        "periodLabel": period_label,
+        "periodType": period,
+        "bars": bars,
+        "maxY": float(max_y if max_y > 0 else 40.0)
+    }
+        
+    # 5. Fetch Plants Details
+    plants_cursor = plant_collection.find({})
+    plants = []
+    async for plant in plants_cursor:
         plants.append({
-            "name": f"Plant {i + 2}",
-            "status": "expired" if i >= 4 else "active",
-            "todayKwh": "36489 Kwh",
-            "totalKwh": "36489 Kwh",
-            "capacityKwh": "36489 Kwh",
-            "lastUpdated": "Jan 10, 8:00 AM"
+            "name": plant["name"],
+            "status": plant["status"],
+            "todayKwh": plant["todayKwh"],
+            "totalKwh": plant["totalKwh"],
+            "capacityKwh": plant["capacityKwh"],
+            "lastUpdated": plant["lastUpdated"]
         })
         
     dashboard_data = {
-        "userName": "Dhruti",
+        "userName": user_name,
         "energyProduction": energyProduction,
         "devices": devices,
         "plantsStatus": plantsStatus,
@@ -86,3 +125,4 @@ async def getDashboardData():
     }
     
     return dashboard_data
+

@@ -20,6 +20,12 @@ class PlantsDetailsTable extends StatefulWidget {
 class _PlantsDetailsTableState extends State<PlantsDetailsTable> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  final Set<PlantStatus> _selectedStatuses = {
+    PlantStatus.active,
+    PlantStatus.alert,
+    PlantStatus.partiallyActive,
+    PlantStatus.expired
+  };
 
   @override
   void initState() {
@@ -35,13 +41,12 @@ class _PlantsDetailsTableState extends State<PlantsDetailsTable> {
     super.dispose();
   }
 
-  /// Filters plants by search query. When backend is connected, replace
-  /// with API call: GET /api/plants?search=query
   List<PlantDetail> get _filteredPlants {
-    if (_searchQuery.isEmpty) return widget.plants;
-    return widget.plants
-        .where((p) => p.name.toLowerCase().contains(_searchQuery))
-        .toList();
+    return widget.plants.where((p) {
+      final matchesSearch = p.name.toLowerCase().contains(_searchQuery);
+      final matchesStatus = _selectedStatuses.contains(p.status);
+      return matchesSearch && matchesStatus;
+    }).toList();
   }
 
   static Color _statusColor(PlantStatus status) {
@@ -65,8 +70,15 @@ class _PlantsDetailsTableState extends State<PlantsDetailsTable> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF60A5FA).withValues(alpha: 0.2),
+          color: const Color(0xFFE2E8F0),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -74,49 +86,70 @@ class _PlantsDetailsTableState extends State<PlantsDetailsTable> {
           Padding(
             padding: const EdgeInsets.all(24.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   'Plants Details',
                   style: TextStyle(
-                    color: Color(0xFF0EA5E9),
-                    fontSize: 24,
+                    color: Color(0xFF1E293B),
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.tune, color: Color(0xFF0EA5E9)),
-                      onPressed: () {
-                        // TODO: Backend - open filter modal, call GET /api/plants?status=...
-                      },
-                    ),
-                    const SizedBox(width: 16),
-                    SizedBox(
-                      width: 200,
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          hintText: 'Search Plants',
-                          prefixIcon:
-                              const Icon(Icons.search, color: Colors.grey),
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 16),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide:
-                                const BorderSide(color: Color(0xFFE2E8F0)),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide:
-                                const BorderSide(color: Color(0xFFE2E8F0)),
-                          ),
-                        ),
+                const Spacer(),
+                PopupMenuButton<PlantStatus>(
+                  icon: Icon(
+                    Icons.tune,
+                    color: _selectedStatuses.length < 4
+                        ? const Color(0xFF0EA5E9)
+                        : const Color(0xFF64748B),
+                  ),
+                  tooltip: 'Filter by Status',
+                  onSelected: (status) {
+                    setState(() {
+                      if (_selectedStatuses.contains(status)) {
+                        if (_selectedStatuses.length > 1) {
+                          _selectedStatuses.remove(status);
+                        }
+                      } else {
+                        _selectedStatuses.add(status);
+                      }
+                    });
+                  },
+                  itemBuilder: (context) {
+                    return PlantStatus.values.map((status) {
+                      final isSelected = _selectedStatuses.contains(status);
+                      return CheckedPopupMenuItem<PlantStatus>(
+                        value: status,
+                        checked: isSelected,
+                        child: Text(status.name[0].toUpperCase() + status.name.substring(1)),
+                      );
+                    }).toList();
+                  },
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 240,
+                  height: 40,
+                  child: TextField(
+                    controller: _searchController,
+                    style: const TextStyle(fontSize: 14),
+                    decoration: InputDecoration(
+                      hintText: 'Search plants...',
+                      hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+                      prefixIcon: const Icon(Icons.search, size: 18, color: Color(0xFF94A3B8)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                      filled: true,
+                      fillColor: const Color(0xFFF8FAFC),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),

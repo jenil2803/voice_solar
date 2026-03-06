@@ -17,19 +17,29 @@ class PlantsStatusCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF60A5FA).withValues(alpha: 0.2)),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Stack(
         children: [
           Positioned(
-            right: 0,
-            top: 10,
-            bottom: 10,
-            width: 180,
-            child: CustomPaint(
-              painter: DottedMapPainter(),
+            right: -20,
+            top: 40,
+            bottom: 0,
+            width: 160,
+            child: Opacity(
+              opacity: 0.5,
+              child: CustomPaint(
+                painter: DottedMapPainter(),
+              ),
             ),
           ),
           Column(
@@ -38,40 +48,47 @@ class PlantsStatusCard extends StatelessWidget {
               const Text(
                 'Plants Status',
                 style: TextStyle(
-                  color: Color(0xFF0EA5E9),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 32),
-              Text(
-                '${data.totalPlants}',
-                style: const TextStyle(
-                  color: Color(0xFF64748B),
-                  fontSize: 32,
+                  color: Color(0xFF1E293B),
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  height: 1,
                 ),
-              ),
-              const Text(
-                'Total Plants',
-                style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
               ),
               const SizedBox(height: 24),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  _buildStat('${data.active}', 'Active', const Color(0xFF3B82F6)),
-                  const SizedBox(width: 32),
-                  _buildStat('${data.alert}', 'Alert', const Color(0xFFEF4444)),
+                  Text(
+                    '${data.totalPlants}',
+                    style: const TextStyle(
+                      color: Color(0xFF0EA5E9),
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      height: 1,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 4),
+                    child: Text(
+                      'Total Plants',
+                      style: TextStyle(
+                        color: Color(0xFF64748B),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 8),
-              Row(
+              const SizedBox(height: 32),
+              Wrap(
+                spacing: 24,
+                runSpacing: 16,
                 children: [
-                  _buildStat('${data.partiallyActive}', 'Partially Active',
-                      const Color(0xFFF59E0B)),
-                  const SizedBox(width: 32),
-                  _buildStat('${data.expired}', 'Expired', const Color(0xFFEF4444)),
+                  _buildStat('${data.active}', 'Active', const Color(0xFF22C55E)),
+                  _buildStat('${data.alert}', 'Alert', const Color(0xFFEF4444)),
+                  _buildStat('${data.partiallyActive}', 'Partial', const Color(0xFFF59E0B)),
+                  _buildStat('${data.expired}', 'Expired', const Color(0xFF94A3B8)),
                 ],
               ),
             ],
@@ -85,17 +102,30 @@ class PlantsStatusCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          number,
-          style: TextStyle(
-            color: color,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              number,
+              style: const TextStyle(
+                color: Color(0xFF1E293B),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
         Text(
           label,
-          style: TextStyle(color: color.withAlpha(204), fontSize: 12),
+          style: const TextStyle(color: Color(0xFF64748B), fontSize: 11),
         ),
       ],
     );
