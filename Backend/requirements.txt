@@ -8,4 +8,5 @@ python-dotenv==1.0.1
 python-multipart==0.0.9
 email-validator==2.2.0
 dnspython==2.6.1
-mongomock==4.1.2
+mongomock==4.1.2# AI Agent Dependencies
+# (Note: FastApi, Pydantic, and re are already included or built-in, no new pip packages were required for the backend routing logic.)

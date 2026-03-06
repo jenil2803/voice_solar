@@ -41,8 +41,10 @@ class _AIAgentDialogState extends State<AIAgentDialog> {
         onStatus: (val) {
           if (val == 'done' || val == 'notListening') {
             setState(() => _isListening = false);
-            // Optionally auto-send when they stop speaking:
-            // if (_controller.text.isNotEmpty) _sendCommand(_controller.text);
+            // Auto-send when they stop speaking:
+            if (_controller.text.isNotEmpty && !_isLoading) {
+              _sendCommand(_controller.text);
+            }
           }
         },
         onError: (val) {
