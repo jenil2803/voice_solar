@@ -9,6 +9,7 @@ from routes.SLMSRoutes import router as slms_router
 from routes.AlertRoutes import router as alert_router
 from routes.ExportRoutes import router as export_router
 from routes.DashboardRoutes import router as dashboard_router
+from routes.AgentRoutes import router as agent_router
 
 
 # Import CORS middleware
@@ -42,6 +43,7 @@ app.include_router(slms_router)
 app.include_router(alert_router)
 app.include_router(export_router)
 app.include_router(dashboard_router)
+app.include_router(agent_router)
 
 
 # Root API
