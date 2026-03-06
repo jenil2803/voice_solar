@@ -80,8 +80,8 @@ class Sidebar extends StatelessWidget {
 
           _NavItem(
             icon: Icons.wifi,
-            isActive: location.startsWith('/network'),
-            onTap: () {},
+            isActive: location.startsWith('/sensors'),
+            onTap: () => context.go('/sensors'),
           ),
 
           const SizedBox(height: 16),
