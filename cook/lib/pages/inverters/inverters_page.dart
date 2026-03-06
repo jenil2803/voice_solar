@@ -143,6 +143,26 @@ class InvertersPage extends StatelessWidget {
                         Expanded(
                           flex: 2,
                           child: Text(
+                            'Category',
+                            style: TextStyle(
+                              color: Color(0xFF64748B),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            'Manufacturer',
+                            style: TextStyle(
+                              color: Color(0xFF64748B),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
                             'Today Generation',
                             style: TextStyle(
                               color: Color(0xFF64748B),
@@ -182,6 +202,8 @@ class InvertersPage extends StatelessWidget {
                       itemBuilder: (context, index) {
                         return _buildTableRow(
                           deviceName: 'Kutch Plant',
+                          category: 'inverter',
+                          manufac: 'Mindra',
                           todayGen: '36489 Kwh',
                           totalGen: '36489 Kwh',
                           lastUpdated: 'Jan 10, 8:00 AM',
@@ -206,6 +228,8 @@ class InvertersPage extends StatelessWidget {
 
   Widget _buildTableRow({
     required String deviceName,
+    required String category,
+    required String manufac,
     required String todayGen,
     required String totalGen,
     required String lastUpdated,
@@ -241,15 +265,29 @@ class InvertersPage extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
-              todayGen,
+              category,
               style: const TextStyle(color: Color(0xFF475569)),
             ),
           ),
           Expanded(
             flex: 2,
             child: Text(
-              totalGen,
+              manufac,
               style: const TextStyle(color: Color(0xFF475569)),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              todayGen,
+              style: const TextStyle(color: Color.fromARGB(255, 21, 236, 78)),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              totalGen,
+              style: const TextStyle(color: Color.fromARGB(255, 21, 236, 78)),
             ),
           ),
           Expanded(
