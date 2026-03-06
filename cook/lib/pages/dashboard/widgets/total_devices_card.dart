@@ -1,16 +1,50 @@
 import 'package:flutter/material.dart';
 
+import '../../../models/dashboard_models.dart';
+
+/// Displays device counts as a stacked bar.
+///
+/// BACKEND: Receives [List<DeviceCount>] from dashboard. MongoDB collection
+/// `devices` could have: { type, count }. The `flex` is derived from count
+/// for bar width proportion.
 class TotalDevicesCard extends StatelessWidget {
-  const TotalDevicesCard({super.key});
+  final List<DeviceCount> devices;
+
+  const TotalDevicesCard({super.key, required this.devices});
+
+  static const List<Color> _deviceColors = [
+    Color(0xFF3B82F6),
+    Color(0xFF60A5FA),
+    Color(0xFF93C5FD),
+    Color(0xFFDBEAFE),
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final totalFlex = devices.fold<int>(0, (sum, d) => sum + d.flex);
+    if (devices.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFF60A5FA).withValues(alpha: 0.2)),
+        ),
+        child: const Center(
+          child: Text(
+            'No devices',
+            style: TextStyle(color: Color(0xFF64748B)),
+          ),
+        ),
+      );
+    }
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Color(0x1A9E9E9E)),
+        border: Border.all(color: const Color(0xFF60A5FA).withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,7 +58,6 @@ class TotalDevicesCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          // Stacked Bar Placeholder
           Container(
             height: 40,
             decoration: BoxDecoration(
@@ -32,24 +65,26 @@ class TotalDevicesCard extends StatelessWidget {
             ),
             clipBehavior: Clip.antiAlias,
             child: Row(
-              children: [
-                Expanded(flex: 5, child: Container(color: const Color(0xFF3B82F6))),
-                Expanded(flex: 1, child: Container(color: const Color(0xFF60A5FA))),
-                Expanded(flex: 2, child: Container(color: const Color(0xFF93C5FD))),
-                Expanded(flex: 4, child: Container(color: const Color(0xFFDBEAFE))),
-              ],
+              children: devices.asMap().entries.map((e) {
+                final flex = totalFlex > 0 ? e.value.flex : 1;
+                final color = _deviceColors[e.key % _deviceColors.length];
+                return Expanded(
+                    flex: flex, child: Container(color: color));
+              }).toList(),
             ),
           ),
           const SizedBox(height: 12),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('MFM - 5', style: TextStyle(color: Color(0xFF3B82F6), fontSize: 12)),
-              Text('WFM - 1', style: TextStyle(color: Color(0xFF60A5FA), fontSize: 12)),
-              Text('SLMS - 2', style: TextStyle(color: Color(0xFF93C5FD), fontSize: 12)),
-              Text('Inverters - 4', style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 12)),
-            ],
-          )
+          Wrap(
+            spacing: 16,
+            runSpacing: 8,
+            children: devices.asMap().entries.map((e) {
+              final color = _deviceColors[e.key % _deviceColors.length];
+              return Text(
+                '${e.value.type} - ${e.value.count}',
+                style: TextStyle(color: color, fontSize: 12),
+              );
+            }).toList(),
+          ),
         ],
       ),
     );

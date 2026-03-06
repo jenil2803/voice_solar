@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
 
+import '../../../models/dashboard_models.dart';
+
+/// Displays plants status breakdown (total, active, alert, etc.).
+///
+/// BACKEND: Receives [PlantsStatusData] from dashboard. MongoDB: aggregate
+/// from `plants` collection by status field. Status values: active, alert,
+/// partiallyActive, expired.
 class PlantsStatusCard extends StatelessWidget {
-  const PlantsStatusCard({super.key});
+  final PlantsStatusData data;
+
+  const PlantsStatusCard({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC), // slightly darker background
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF60A5FA).withValues(alpha: 0.2)),
       ),
       child: Stack(
         children: [
-          // MapPlaceholder
           Positioned(
             right: 0,
             top: 10,
@@ -34,10 +43,10 @@ class PlantsStatusCard extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 16),
-              const Text(
-                '45',
-                style: TextStyle(
+              const SizedBox(height: 32),
+              Text(
+                '${data.totalPlants}',
+                style: const TextStyle(
                   color: Color(0xFF64748B),
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -51,17 +60,18 @@ class PlantsStatusCard extends StatelessWidget {
               const SizedBox(height: 24),
               Row(
                 children: [
-                  _buildStat('30', 'Active', const Color(0xFF3B82F6)),
+                  _buildStat('${data.active}', 'Active', const Color(0xFF3B82F6)),
                   const SizedBox(width: 32),
-                  _buildStat('10', 'Alert', const Color(0xFFEF4444)),
+                  _buildStat('${data.alert}', 'Alert', const Color(0xFFEF4444)),
                 ],
               ),
               const SizedBox(height: 8),
               Row(
                 children: [
-                  _buildStat('10', 'Partially Active', const Color(0xFFF59E0B)),
+                  _buildStat('${data.partiallyActive}', 'Partially Active',
+                      const Color(0xFFF59E0B)),
                   const SizedBox(width: 32),
-                  _buildStat('10', 'Expired', const Color(0xFFEF4444)),
+                  _buildStat('${data.expired}', 'Expired', const Color(0xFFEF4444)),
                 ],
               ),
             ],

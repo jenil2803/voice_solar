@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../../models/dashboard_models.dart';
+
+/// Displays energy production gauge and stats.
+///
+/// BACKEND: Receives [EnergyProductionData] from dashboard. When connected to
+/// MongoDB, ensure your API returns: todayKwh, percentage, totalProduction, totalCapacity.
 class EnergyProductionCard extends StatelessWidget {
-  const EnergyProductionCard({super.key});
+  final EnergyProductionData data;
+
+  const EnergyProductionCard({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +18,7 @@ class EnergyProductionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Color(0x1A9E9E9E)),
+        border: Border.all(color: const Color(0xFF60A5FA).withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,7 +32,6 @@ class EnergyProductionCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          // Semicircle gauge placeholder
           Center(
             child: SizedBox(
               height: 150,
@@ -41,24 +48,26 @@ class EnergyProductionCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const Column(
+                  Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '20 kWh',
-                        style: TextStyle(color: Color(0xFF0EA5E9), fontSize: 14),
+                        data.todayKwh,
+                        style: const TextStyle(
+                            color: Color(0xFF0EA5E9), fontSize: 14),
                       ),
                       Text(
-                        '50.75%',
-                        style: TextStyle(
+                        '${data.percentage.toStringAsFixed(2)}%',
+                        style: const TextStyle(
                           color: Color(0xFF0EA5E9),
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Today\'s generation',
-                        style: TextStyle(color: Color(0xFF64748B), fontSize: 12),
+                        style: TextStyle(
+                            color: Color(0xFF64748B), fontSize: 12),
                       ),
                     ],
                   ),
@@ -70,8 +79,8 @@ class EnergyProductionCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildStat('Total Production', '42.8 kWh'),
-              _buildStat('Total Capacity', '42.8 kWh'),
+              _buildStat('Total Production', data.totalProduction),
+              _buildStat('Total Capacity', data.totalCapacity),
             ],
           )
         ],
@@ -89,9 +98,19 @@ class EnergyProductionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
+          Text(
+            label,
+            style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
+          ),
           const SizedBox(height: 4),
-          Text(value, style: const TextStyle(color: Color(0xFF0EA5E9), fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Color(0xFF0EA5E9),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );

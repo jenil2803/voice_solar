@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import '../../../models/dashboard_models.dart';
+
 class EnergyGenerationChart extends StatefulWidget {
-  const EnergyGenerationChart({super.key});
+  final EnergyChartData data;
+
+  const EnergyGenerationChart({super.key, required this.data});
 
   @override
   State<EnergyGenerationChart> createState() => _EnergyGenerationChartState();
@@ -77,12 +81,14 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
                 ),
               ),
               const Spacer(),
-              _buildDropdown('September 2026'),
+              _buildDropdown(widget.data.periodLabel),
               const SizedBox(width: 12),
-              _buildToggleButtons(),
+              _buildToggleButtons(widget.data.periodType),
               const SizedBox(width: 12),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  // TODO: Backend - add export/download endpoint
+                },
                 icon: const Icon(Icons.download, color: Colors.white),
                 style: IconButton.styleFrom(
                   backgroundColor: const Color(0xFF60A5FA),
@@ -98,7 +104,7 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: isGenerationSelected ? 40 : 1000,
+                maxY: isGenerationSelected ? widget.data.maxY : 1000,
                 barTouchData: BarTouchData(enabled: false),
                 titlesData: FlTitlesData(
                   show: true,
@@ -141,7 +147,9 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
-                  horizontalInterval: isGenerationSelected ? 10 : 250,
+                  horizontalInterval: isGenerationSelected
+                      ? (widget.data.maxY / 4).clamp(1.0, double.infinity)
+                      : 250,
                   getDrawingHorizontalLine: (value) => FlLine(
                     color: const Color(0x339E9E9E),
                     strokeWidth: 1,
@@ -149,40 +157,39 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
                   ),
                 ),
                 borderData: FlBorderData(show: false),
-                barGroups: List.generate(
-                  22,
-                  (i) {
-                    double y;
-                    if (isGenerationSelected) {
-                      y = (i == 19) ? 38 : (20 + (i % 5) * 4).toDouble();
-                    } else {
-                      y = (i == 19) ? 900 : (400 + (i % 5) * 100).toDouble();
-                    }
-                    return BarChartGroupData(
-                      x: i + 1,
-                      barRods: [
-                        BarChartRodData(
-                          toY: y,
-                          color: (i == 19 || i == 18)
-                              ? const Color(0xFF3B82F6)
-                              : const Color(0xFFBAE6FD),
-                          width: 8,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ],
-                    );
-                  },
-                ),
+                barGroups: widget.data.bars.asMap().entries.map((e) {
+                  final isHighlight = e.key == widget.data.bars.length - 3;
+                  double y;
+                  if (isGenerationSelected) {
+                    y = e.value.y;
+                  } else {
+                    // Approximate revenue scaling if not provided by backend
+                    y = e.value.y * 25;
+                  }
+                  return BarChartGroupData(
+                    x: e.value.x,
+                    barRods: [
+                      BarChartRodData(
+                        toY: y,
+                        color: isHighlight
+                            ? const Color(0xFF3B82F6)
+                            : const Color(0xFFBAE6FD),
+                        width: 8,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ],
+                  );
+                }).toList(),
               ),
             ),
           ),
           if (!isGenerationSelected)
-             Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+            const Padding(
+              padding: EdgeInsets.only(top: 8.0),
               child: Text(
                 'Total Revenue: ₹ 2,45,670',
                 style: TextStyle(
-                  color: const Color(0xFF0EA5E9),
+                  color: Color(0xFF0EA5E9),
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
@@ -212,7 +219,7 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
     );
   }
 
-  Widget _buildToggleButtons() {
+  Widget _buildToggleButtons(ChartPeriodType type) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: const Color(0x339E9E9E)),
@@ -222,9 +229,9 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildToggleBtn('Monthly', false),
-          _buildToggleBtn('Yearly', true),
-          _buildToggleBtn('Lifetime', false),
+          _buildToggleBtn('Monthly', type == ChartPeriodType.monthly),
+          _buildToggleBtn('Yearly', type == ChartPeriodType.yearly),
+          _buildToggleBtn('Lifetime', type == ChartPeriodType.lifetime),
         ],
       ),
     );

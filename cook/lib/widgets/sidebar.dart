@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key});
@@ -43,51 +44,51 @@ class Sidebar extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 64),
+          const SizedBox(height: 48),
 
           // Navigation Icons
           _NavItem(
-            icon: Icons.grid_view,
+            icon: LucideIcons.layoutGrid,
             isActive: location == '/' || location.startsWith('/dashboard'),
             onTap: () => context.go('/'),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           _NavItem(
-            icon: Icons.solar_power,
+            icon: LucideIcons.factory,
             isActive: location.startsWith('/plants'),
             onTap: () => context.go('/plants'),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           _NavItem(
-            icon: Icons.book_outlined,
+            icon: LucideIcons.bookOpen,
             isActive: location.startsWith('/reports'),
             onTap: () => context.go('/reports'),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           _NavItem(
-            icon: Icons.sync,
+            icon: LucideIcons.refreshCcw,
             isActive: location.startsWith('/sync'),
             onTap: () {},
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           _NavItem(
-            icon: Icons.wifi,
+            icon: LucideIcons.wifi,
             isActive: location.startsWith('/network'),
             onTap: () {},
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           _NavItem(
-            icon: Icons.logout_outlined,
+            icon: LucideIcons.logOut,
             isActive: false,
             onTap: () {},
           ),
@@ -96,16 +97,16 @@ class Sidebar extends StatelessWidget {
 
           // Bottom Icons
           _NavItem(
-            icon: Icons.notifications_none,
+            icon: LucideIcons.bell,
             isActive: false,
             onTap: () {},
             hasBadge: true,
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           _NavItem(
-            icon: Icons.person_outline,
+            icon: LucideIcons.userPlus,
             isActive: false,
             onTap: () {},
           ),
