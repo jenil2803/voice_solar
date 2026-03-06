@@ -1,10 +1,65 @@
 import 'package:flutter/material.dart';
 
-class PlantsDetailsTable extends StatelessWidget {
-  const PlantsDetailsTable({super.key});
+import '../../../models/dashboard_models.dart';
+
+/// Displays plants in a searchable, filterable table.
+///
+/// BACKEND: Receives [List<PlantDetail>] from dashboard. MongoDB: map directly
+/// from `plants` collection. Each document: name, status, todayKwh, totalKwh,
+/// capacityKwh, lastUpdated. Add search/filter logic that calls your API
+/// (e.g. GET /api/plants?search=...&status=...).
+class PlantsDetailsTable extends StatefulWidget {
+  final List<PlantDetail> plants;
+
+  const PlantsDetailsTable({super.key, required this.plants});
+
+  @override
+  State<PlantsDetailsTable> createState() => _PlantsDetailsTableState();
+}
+
+class _PlantsDetailsTableState extends State<PlantsDetailsTable> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() => _searchQuery = _searchController.text.toLowerCase());
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  /// Filters plants by search query. When backend is connected, replace
+  /// with API call: GET /api/plants?search=query
+  List<PlantDetail> get _filteredPlants {
+    if (_searchQuery.isEmpty) return widget.plants;
+    return widget.plants
+        .where((p) => p.name.toLowerCase().contains(_searchQuery))
+        .toList();
+  }
+
+  static Color _statusColor(PlantStatus status) {
+    switch (status) {
+      case PlantStatus.active:
+        return const Color(0xFF22C55E);
+      case PlantStatus.alert:
+      case PlantStatus.expired:
+        return const Color(0xFFEF4444);
+      case PlantStatus.partiallyActive:
+        return const Color(0xFFF59E0B);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final plants = _filteredPlants;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -33,12 +88,15 @@ class PlantsDetailsTable extends StatelessWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.tune, color: Color(0xFF0EA5E9)),
-                      onPressed: () {},
+                      onPressed: () {
+                        // TODO: Backend - open filter modal, call GET /api/plants?status=...
+                      },
                     ),
                     const SizedBox(width: 16),
                     SizedBox(
                       width: 200,
                       child: TextField(
+                        controller: _searchController,
                         decoration: InputDecoration(
                           hintText: 'Search Plants',
                           prefixIcon:
@@ -86,52 +144,40 @@ class PlantsDetailsTable extends StatelessWidget {
                     label: Text('Last Updated',
                         style: TextStyle(color: Color(0xFF64748B)))),
               ],
-              rows: List.generate(
-                6,
-                (index) {
-                  Color dotColor;
-
-                  if (index == 0) {
-                    dotColor = const Color(0xFFF59E0B);
-                  } else if (index >= 4) {
-                    dotColor = const Color(0xFFEF4444);
-                  } else {
-                    dotColor = const Color(0xFF22C55E);
-                  }
-
-                  return DataRow(
-                    cells: [
-                      DataCell(
-                        Row(
-                          children: [
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: dotColor,
-                                shape: BoxShape.circle,
-                              ),
+              rows: plants.map((plant) {
+                final dotColor = _statusColor(plant.status);
+                return DataRow(
+                  cells: [
+                    DataCell(
+                      Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: dotColor,
+                              shape: BoxShape.circle,
                             ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              'Kutch Plant',
-                              style: TextStyle(color: Color(0xFF334155)),
-                            ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            plant.name,
+                            style: const TextStyle(color: Color(0xFF334155)),
+                          ),
+                        ],
                       ),
-                      const DataCell(Text('36489 Kwh',
-                          style: TextStyle(color: Color(0xFF334155)))),
-                      const DataCell(Text('36489 Kwh',
-                          style: TextStyle(color: Color(0xFF334155)))),
-                      const DataCell(Text('36489 Kwh',
-                          style: TextStyle(color: Color(0xFF334155)))),
-                      const DataCell(Text('Jan 10, 8:00 AM',
-                          style: TextStyle(color: Color(0xFF334155)))),
-                    ],
-                  );
-                },
-              ),
+                    ),
+                    DataCell(Text(plant.todayKwh,
+                        style: const TextStyle(color: Color(0xFF334155)))),
+                    DataCell(Text(plant.totalKwh,
+                        style: const TextStyle(color: Color(0xFF334155)))),
+                    DataCell(Text(plant.capacityKwh,
+                        style: const TextStyle(color: Color(0xFF334155)))),
+                    DataCell(Text(plant.lastUpdated,
+                        style: const TextStyle(color: Color(0xFF334155)))),
+                  ],
+                );
+              }).toList(),
             ),
           ),
         ],

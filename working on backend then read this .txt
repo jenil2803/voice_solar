@@ -1,0 +1,9 @@
+Connecting to MongoDB
+Add an HTTP client (e.g. http or dio) to pubspec.yaml.
+Replace the body of getDashboardData() in lib/services/dashboard_service.dart with an API call.
+Use DashboardData.fromJson(jsonDecode(response.body)) when the API returns the expected JSON shape.
+The expected JSON structure is documented in the model comments and fromJson factories.
+
+
+Dashboard service (lib/services/dashboard_service.dart)
+and also in (lib/models/dashboard_models.dart)

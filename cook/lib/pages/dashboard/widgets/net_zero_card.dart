@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../../models/dashboard_models.dart';
+
+/// Displays net zero / sustainability metrics (CO2, coal, trees).
+///
+/// BACKEND: Receives [NetZeroData] from dashboard. MongoDB: consider a
+/// `sustainability` or `environmental_impact` collection with these fields.
 class NetZeroCard extends StatelessWidget {
-  const NetZeroCard({super.key});
+  final NetZeroData data;
+
+  const NetZeroCard({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +40,6 @@ class NetZeroCard extends StatelessWidget {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Grid background
                     Container(
                       decoration: BoxDecoration(
                         border: Border.all(color: Color(0x1A9E9E9E)),
@@ -41,17 +48,20 @@ class NetZeroCard extends StatelessWidget {
                     ),
                     Positioned(
                       top: 20,
-                      child: _buildCircleBadge('1.03k', 'co2 reduced', const Color(0xFF38BDF8), 90),
+                      child: _buildCircleBadge(
+                          data.co2Reduced, 'co2 reduced', const Color(0xFF38BDF8), 90),
                     ),
                     Positioned(
                       bottom: 40,
                       left: 20,
-                      child: _buildCircleBadge('1.4 T', 'Coal Saved', const Color(0xFF94A3B8), 80),
+                      child: _buildCircleBadge(
+                          data.coalSaved, 'Coal Saved', const Color(0xFF94A3B8), 80),
                     ),
                     Positioned(
                       bottom: 60,
                       right: 10,
-                      child: _buildCircleBadge('155K', 'Trees Planted', const Color(0xFF34D399), 70),
+                      child: _buildCircleBadge(
+                          data.treesPlanted, 'Trees Planted', const Color(0xFF34D399), 70),
                     ),
                   ],
                 ),
@@ -63,7 +73,8 @@ class NetZeroCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCircleBadge(String title, String subtitle, Color color, double size) {
+  Widget _buildCircleBadge(
+      String title, String subtitle, Color color, double size) {
     return Container(
       width: size,
       height: size,

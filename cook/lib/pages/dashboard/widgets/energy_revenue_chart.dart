@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import '../../../models/dashboard_models.dart';
+
+/// Displays energy generation bar chart with period selector.
+///
+/// BACKEND: Receives [EnergyChartData] from dashboard. MongoDB: aggregate
+/// `energy_readings` or `readings` by date range. When user changes period,
+/// call [DashboardService.getChartData] with new period - replace that
+/// method to hit your API endpoint (e.g. GET /api/chart?period=monthly).
 class EnergyGenerationChart extends StatelessWidget {
-  const EnergyGenerationChart({super.key});
+  final EnergyChartData data;
+
+  const EnergyGenerationChart({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +46,19 @@ class EnergyGenerationChart extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              _buildDropdown('September 2026'),
+              _buildDropdown(data.periodLabel),
               const SizedBox(width: 12),
-              _buildToggleButtons(),
+              _buildToggleButtons(data.periodType),
               const SizedBox(width: 12),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  // TODO: Backend - add export/download endpoint
+                },
                 icon: const Icon(Icons.download, color: Colors.white),
                 style: IconButton.styleFrom(
                   backgroundColor: const Color(0xFF60A5FA),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
               )
             ],
@@ -56,7 +69,7 @@ class EnergyGenerationChart extends StatelessWidget {
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: 40,
+                maxY: data.maxY,
                 barTouchData: BarTouchData(enabled: false),
                 titlesData: FlTitlesData(
                   show: true,
@@ -68,7 +81,8 @@ class EnergyGenerationChart extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
                             value.toInt().toString(),
-                            style: const TextStyle(color: Colors.grey, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.grey, fontSize: 12),
                           ),
                         );
                       },
@@ -82,13 +96,16 @@ class EnergyGenerationChart extends StatelessWidget {
                       getTitlesWidget: (value, meta) {
                         return Text(
                           value.toInt().toString(),
-                          style: const TextStyle(color: Colors.grey, fontSize: 12),
+                          style: const TextStyle(
+                              color: Colors.grey, fontSize: 12),
                         );
                       },
                     ),
                   ),
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
                 ),
                 gridData: FlGridData(
                   show: true,
@@ -101,20 +118,22 @@ class EnergyGenerationChart extends StatelessWidget {
                   ),
                 ),
                 borderData: FlBorderData(show: false),
-                barGroups: List.generate(
-                  22,
-                  (i) => BarChartGroupData(
-                    x: i + 1,
+                barGroups: data.bars.asMap().entries.map((e) {
+                  final isHighlight = e.key == data.bars.length - 3;
+                  return BarChartGroupData(
+                    x: e.value.x,
                     barRods: [
                       BarChartRodData(
-                        toY: (i == 19) ? 38 : (20 + (i % 5) * 4).toDouble(),
-                        color: (i == 19) ? const Color(0xFF3B82F6) : const Color(0xFFBAE6FD),
+                        toY: e.value.y,
+                        color: isHighlight
+                            ? const Color(0xFF3B82F6)
+                            : const Color(0xFFBAE6FD),
                         width: 8,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ],
-                  ),
-                ),
+                  );
+                }).toList(),
               ),
             ),
           ),
@@ -142,7 +161,7 @@ class EnergyGenerationChart extends StatelessWidget {
     );
   }
 
-  Widget _buildToggleButtons() {
+  Widget _buildToggleButtons(ChartPeriodType type) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Color(0x339E9E9E)),
@@ -152,9 +171,9 @@ class EnergyGenerationChart extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildToggleBtn('Monthly', false),
-          _buildToggleBtn('Yearly', true),
-          _buildToggleBtn('Lifetime', false),
+          _buildToggleBtn('Monthly', type == ChartPeriodType.monthly),
+          _buildToggleBtn('Yearly', type == ChartPeriodType.yearly),
+          _buildToggleBtn('Lifetime', type == ChartPeriodType.lifetime),
         ],
       ),
     );
