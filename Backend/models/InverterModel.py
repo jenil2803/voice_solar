@@ -10,6 +10,8 @@ class Inverter(BaseModel):
     today_generation: float
     total_generation: float
     status: str
+    category: str
+    lastUpdated: str
 
 
 class InverterOut(Inverter):

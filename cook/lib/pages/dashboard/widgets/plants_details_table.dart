@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../models/dashboard_models.dart';
+import '../../plants/plant_details_page.dart';
 
 /// Displays plants in a searchable, filterable table.
 ///
@@ -163,11 +164,15 @@ class _PlantsDetailsTableState extends State<PlantsDetailsTable> {
                   constraints: BoxConstraints(minWidth: constraints.maxWidth),
                   child: DataTable(
                     columnSpacing: 24,
+                    showCheckboxColumn: false,
                     headingRowColor:
                         WidgetStateProperty.all(const Color(0xFFF8FAFC)),
                     columns: const [
                       DataColumn(
                           label: Text('Plant Name',
+                              style: TextStyle(color: Color(0xFF64748B)))),
+                      DataColumn(
+                          label: Text('Location',
                               style: TextStyle(color: Color(0xFF64748B)))),
                       DataColumn(
                           label: Text('Today',
@@ -183,41 +188,50 @@ class _PlantsDetailsTableState extends State<PlantsDetailsTable> {
                               style: TextStyle(color: Color(0xFF64748B)))),
                     ],
                     rows: plants.map((plant) {
-                      final dotColor = _statusColor(plant.status);
                       return DataRow(
+                        onSelectChanged: (selected) {
+                          if (selected == true || selected == false) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PlantDetailsPage(plant: plant),
+                              ),
+                            );
+                          }
+                        },
                         cells: [
-                          DataCell(
-                            Row(
-                              children: [
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                    color: dotColor,
-                                    shape: BoxShape.circle,
-                                  ),
+                          DataCell(Row(
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: _statusColor(plant.status),
+                                  shape: BoxShape.circle,
                                 ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  plant.name,
-                                  style:
-                                      const TextStyle(color: Color(0xFF334155)),
-                                ),
-                              ],
-                            ),
-                          ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(plant.name,
+                                  style: const TextStyle(
+                                      color: Color(0xFF334155),
+                                      fontWeight: FontWeight.w500)),
+                            ],
+                          )),
+                          DataCell(Text('${plant.city}, ${plant.state}',
+                              style:
+                                  const TextStyle(color: Color(0xFF64748B)))),
                           DataCell(Text(plant.todayKwh,
                               style:
-                                  const TextStyle(color: Color(0xFF334155)))),
+                                  const TextStyle(color: Color(0xFF64748B)))),
                           DataCell(Text(plant.totalKwh,
                               style:
-                                  const TextStyle(color: Color(0xFF334155)))),
+                                  const TextStyle(color: Color(0xFF64748B)))),
                           DataCell(Text(plant.capacityKwh,
                               style:
-                                  const TextStyle(color: Color(0xFF334155)))),
+                                  const TextStyle(color: Color(0xFF64748B)))),
                           DataCell(Text(plant.lastUpdated,
                               style:
-                                  const TextStyle(color: Color(0xFF334155)))),
+                                  const TextStyle(color: Color(0xFF64748B)))),
                         ],
                       );
                     }).toList(),

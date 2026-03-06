@@ -32,9 +32,26 @@ async def getDashboardData(period: str = "monthly"):
             "expired": 0
         }
     else:
+        import random
         energyProduction = overview.get("energyProduction")
         netZero = overview.get("netZero")
         plantsStatus = overview.get("plantsStatus")
+
+        # Simulate dynamic live data for the dashboard Pie Chart & Net Zero
+        try:
+            base_pct = float(energyProduction.get("percentage", 50.75))
+            energyProduction["percentage"] = round(base_pct + random.uniform(-1.5, 3.5), 2)
+            
+            base_today = float(str(energyProduction.get("todayKwh", "42.8 kWh")).replace(" kWh", ""))
+            energyProduction["todayKwh"] = f"{round(base_today + random.uniform(0.1, 1.2), 1)} kWh"
+            
+            base_co2 = float(str(netZero.get("co2Reduced", "1.03k")).replace("k", ""))
+            netZero["co2Reduced"] = f"{round(base_co2 + random.uniform(0.01, 0.05), 2)}k"
+            
+            base_coal = float(str(netZero.get("coalSaved", "1.4 T")).replace(" T", ""))
+            netZero["coalSaved"] = f"{round(base_coal + random.uniform(0.01, 0.08), 2)} T"
+        except Exception:
+            pass # fallback to original static data if parsing fails
         
     # 3. Fetch Devices
     devices_cursor = devices_collection.find({})
@@ -106,12 +123,14 @@ async def getDashboardData(period: str = "monthly"):
     plants = []
     async for plant in plants_cursor:
         plants.append({
-            "name": plant["name"],
-            "status": plant["status"],
-            "todayKwh": plant["todayKwh"],
-            "totalKwh": plant["totalKwh"],
-            "capacityKwh": plant["capacityKwh"],
-            "lastUpdated": plant["lastUpdated"]
+                        "name": str(plant.get("plant_name", plant.get("name", "Unknown"))),
+            "status": str(plant.get("status", "Unknown")),
+            "todayKwh": str(plant.get("todayKwh", "0")),
+            "totalKwh": str(plant.get("totalKwh", "0")),
+            "capacityKwh": str(plant.get("capacityKwh", "0")),
+            "lastUpdated": str(plant.get("lastUpdated", "Unknown")),
+            "city": str(plant.get("city", "N/A")),
+            "state": str(plant.get("state", "N/A")),
         })
         
     dashboard_data = {
