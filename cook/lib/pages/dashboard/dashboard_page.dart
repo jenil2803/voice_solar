@@ -19,7 +19,7 @@ class DashboardPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Namaste, Dhruti!',
+              'Namaste, Alex!',
               style: TextStyle(
                 color: Color(0xFF0EA5E9),
                 fontSize: 16,
@@ -62,13 +62,17 @@ class DashboardPage extends StatelessWidget {
                         Expanded(
                           flex: isLarge ? 8 : 7,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: const [
-                              Row(
-                                children: [
-                                  Expanded(child: PlantsStatusCard()),
-                                  SizedBox(width: 24),
-                                  Expanded(child: NetZeroCard()),
-                                ],
+                              IntrinsicHeight(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(child: PlantsStatusCard()),
+                                    SizedBox(width: 24),
+                                    Expanded(child: NetZeroCard()),
+                                  ],
+                                ),
                               ),
                               SizedBox(height: 24),
                               EnergyGenerationChart(),

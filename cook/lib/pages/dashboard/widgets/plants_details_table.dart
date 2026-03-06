@@ -64,75 +64,86 @@ class PlantsDetailsTable extends StatelessWidget {
             ),
           ),
           const Divider(height: 1, color: Color(0xFF60A5FA)),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              headingRowColor:
-                  WidgetStateProperty.all(const Color(0xFFF8FAFC)),
-              columns: const [
-                DataColumn(
-                    label: Text('Plant Name',
-                        style: TextStyle(color: Color(0xFF64748B)))),
-                DataColumn(
-                    label: Text('Today',
-                        style: TextStyle(color: Color(0xFF64748B)))),
-                DataColumn(
-                    label: Text('Total',
-                        style: TextStyle(color: Color(0xFF64748B)))),
-                DataColumn(
-                    label: Text('Capacity',
-                        style: TextStyle(color: Color(0xFF64748B)))),
-                DataColumn(
-                    label: Text('Last Updated',
-                        style: TextStyle(color: Color(0xFF64748B)))),
-              ],
-              rows: List.generate(
-                6,
-                (index) {
-                  Color dotColor;
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                  child: DataTable(
+                    columnSpacing: 24,
+                    headingRowColor:
+                        WidgetStateProperty.all(const Color(0xFFF8FAFC)),
+                    columns: const [
+                      DataColumn(
+                          label: Text('Plant Name',
+                              style: TextStyle(color: Color(0xFF64748B)))),
+                      DataColumn(
+                          label: Text('Today',
+                              style: TextStyle(color: Color(0xFF64748B)))),
+                      DataColumn(
+                          label: Text('Total',
+                              style: TextStyle(color: Color(0xFF64748B)))),
+                      DataColumn(
+                          label: Text('Capacity',
+                              style: TextStyle(color: Color(0xFF64748B)))),
+                      DataColumn(
+                          label: Text('Last Updated',
+                              style: TextStyle(color: Color(0xFF64748B)))),
+                    ],
+                    rows: List.generate(
+                      6,
+                      (index) {
+                        Color dotColor;
 
-                  if (index == 0) {
-                    dotColor = const Color(0xFFF59E0B);
-                  } else if (index >= 4) {
-                    dotColor = const Color(0xFFEF4444);
-                  } else {
-                    dotColor = const Color(0xFF22C55E);
-                  }
+                        if (index == 0) {
+                          dotColor = const Color(0xFFF59E0B);
+                        } else if (index >= 4) {
+                          dotColor = const Color(0xFFEF4444);
+                        } else {
+                          dotColor = const Color(0xFF22C55E);
+                        }
 
-                  return DataRow(
-                    cells: [
-                      DataCell(
-                        Row(
-                          children: [
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: dotColor,
-                                shape: BoxShape.circle,
+                        return DataRow(
+                          cells: [
+                            DataCell(
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      color: dotColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  const Expanded(
+                                    child: Text(
+                                      'Kutch Plant',
+                                      style: TextStyle(color: Color(0xFF334155)),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              'Kutch Plant',
-                              style: TextStyle(color: Color(0xFF334155)),
-                            ),
+                            const DataCell(Text('36489 Kwh',
+                                style: TextStyle(color: Color(0xFF334155)))),
+                            const DataCell(Text('36489 Kwh',
+                                style: TextStyle(color: Color(0xFF334155)))),
+                            const DataCell(Text('36489 Kwh',
+                                style: TextStyle(color: Color(0xFF334155)))),
+                            const DataCell(Text('Jan 10, 8:00 AM',
+                                style: TextStyle(color: Color(0xFF334155)))),
                           ],
-                        ),
-                      ),
-                      const DataCell(Text('36489 Kwh',
-                          style: TextStyle(color: Color(0xFF334155)))),
-                      const DataCell(Text('36489 Kwh',
-                          style: TextStyle(color: Color(0xFF334155)))),
-                      const DataCell(Text('36489 Kwh',
-                          style: TextStyle(color: Color(0xFF334155)))),
-                      const DataCell(Text('Jan 10, 8:00 AM',
-                          style: TextStyle(color: Color(0xFF334155)))),
-                    ],
-                  );
-                },
-              ),
-            ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),

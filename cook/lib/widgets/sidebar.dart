@@ -65,7 +65,7 @@ class Sidebar extends StatelessWidget {
           _NavItem(
             icon: Icons.book_outlined,
             isActive: location.startsWith('/reports'),
-            onTap: () {},
+            onTap: () => context.go('/reports'),
           ),
 
           const SizedBox(height: 16),

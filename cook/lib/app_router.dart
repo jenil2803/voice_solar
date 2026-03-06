@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'layout/main_layout.dart';
 import 'pages/dashboard/dashboard_page.dart';
 import 'pages/plants/plants_page.dart';
+import 'pages/reports/reports_page.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 final shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -25,6 +26,10 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/plants',
           builder: (context, state) => const PlantsPage(),
+        ),
+        GoRoute(
+          path: '/reports',
+          builder: (context, state) => const ReportsPage(),
         ),
       ],
     ),
