@@ -122,6 +122,7 @@ class _PlantsDetailsTableState extends State<PlantsDetailsTable> {
             ),
           ),
           const Divider(height: 1, color: Color(0xFF60A5FA)),
+<<<<<<< HEAD
           LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
@@ -192,6 +193,65 @@ class _PlantsDetailsTableState extends State<PlantsDetailsTable> {
                 ),
               );
             },
+=======
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+              headingRowColor:
+                  WidgetStateProperty.all(const Color(0xFFF8FAFC)),
+              columns: const [
+                DataColumn(
+                    label: Text('Plant Name',
+                        style: TextStyle(color: Color(0xFF64748B)))),
+                DataColumn(
+                    label: Text('Today',
+                        style: TextStyle(color: Color(0xFF64748B)))),
+                DataColumn(
+                    label: Text('Total',
+                        style: TextStyle(color: Color(0xFF64748B)))),
+                DataColumn(
+                    label: Text('Capacity',
+                        style: TextStyle(color: Color(0xFF64748B)))),
+                DataColumn(
+                    label: Text('Last Updated',
+                        style: TextStyle(color: Color(0xFF64748B)))),
+              ],
+              rows: plants.map((plant) {
+                final dotColor = _statusColor(plant.status);
+                return DataRow(
+                  cells: [
+                    DataCell(
+                      Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: dotColor,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            plant.name,
+                            style: const TextStyle(color: Color(0xFF334155)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    DataCell(Text(plant.todayKwh,
+                        style: const TextStyle(color: Color(0xFF334155)))),
+                    DataCell(Text(plant.totalKwh,
+                        style: const TextStyle(color: Color(0xFF334155)))),
+                    DataCell(Text(plant.capacityKwh,
+                        style: const TextStyle(color: Color(0xFF334155)))),
+                    DataCell(Text(plant.lastUpdated,
+                        style: const TextStyle(color: Color(0xFF334155)))),
+                  ],
+                );
+              }).toList(),
+            ),
+>>>>>>> origin/mildpepper
           ),
         ],
       ),

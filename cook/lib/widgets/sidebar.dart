@@ -64,15 +64,25 @@ class Sidebar extends StatelessWidget {
           const SizedBox(height: 20),
 
           _NavItem(
+<<<<<<< HEAD
             icon: LucideIcons.bookOpen,
             isActive: location.startsWith('/reports'),
             onTap: () => context.go('/reports'),
+=======
+            assetIcon: 'assets/icons/inverter_icon.png',
+            isActive: location.startsWith('/inverters'),
+            onTap: () => context.go('/inverters'),
+>>>>>>> origin/mildpepper
           ),
 
           const SizedBox(height: 20),
 
           _NavItem(
+<<<<<<< HEAD
             icon: LucideIcons.refreshCcw,
+=======
+            assetIcon: 'assets/icons/sync_icon.png',
+>>>>>>> origin/mildpepper
             isActive: location.startsWith('/sync'),
             onTap: () {},
           ),
@@ -80,15 +90,25 @@ class Sidebar extends StatelessWidget {
           const SizedBox(height: 20),
 
           _NavItem(
+<<<<<<< HEAD
             icon: LucideIcons.wifi,
             isActive: location.startsWith('/network'),
             onTap: () {},
+=======
+            assetIcon: 'assets/icons/sensors_icon.png',
+            isActive: location.startsWith('/sensors'),
+            onTap: () => context.go('/sensors'),
+>>>>>>> origin/mildpepper
           ),
 
           const SizedBox(height: 20),
 
           _NavItem(
+<<<<<<< HEAD
             icon: LucideIcons.logOut,
+=======
+            assetIcon: 'assets/icons/logout_outlined_icon.png',
+>>>>>>> origin/mildpepper
             isActive: false,
             onTap: () {},
           ),
@@ -119,17 +139,19 @@ class Sidebar extends StatelessWidget {
 }
 
 class _NavItem extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final String? assetIcon;
   final bool isActive;
   final VoidCallback onTap;
   final bool hasBadge;
 
   const _NavItem({
-    required this.icon,
+    this.icon,
+    this.assetIcon,
     required this.isActive,
     required this.onTap,
     this.hasBadge = false,
-  });
+  }) : assert(icon != null || assetIcon != null);
 
   @override
   Widget build(BuildContext context) {
@@ -153,12 +175,22 @@ class _NavItem extends StatelessWidget {
                     ]
                   : null,
             ),
-            child: Icon(
-              icon,
-              color:
-                  isActive ? const Color(0xFF0EA5E9) : const Color(0xFF64748B),
-              size: 24,
-            ),
+            child: assetIcon != null
+                ? Image.asset(
+                    assetIcon!,
+                    color: isActive
+                        ? const Color(0xFF0EA5E9)
+                        : const Color(0xFF64748B),
+                    width: 24,
+                    height: 24,
+                  )
+                : Icon(
+                    icon,
+                    color: isActive
+                        ? const Color(0xFF0EA5E9)
+                        : const Color(0xFF64748B),
+                    size: 24,
+                  ),
           ),
           if (hasBadge)
             Positioned(

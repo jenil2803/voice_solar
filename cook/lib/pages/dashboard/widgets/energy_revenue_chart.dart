@@ -1,19 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-import '../../../models/dashboard_models.dart';
-
-class EnergyGenerationChart extends StatefulWidget {
-  final EnergyChartData data;
-
-  const EnergyGenerationChart({super.key, required this.data});
-
-  @override
-  State<EnergyGenerationChart> createState() => _EnergyGenerationChartState();
-}
-
-class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
-  bool isGenerationSelected = true;
+class EnergyGenerationChart extends StatelessWidget {
+  const EnergyGenerationChart({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -81,9 +70,9 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
                 ),
               ),
               const Spacer(),
-              _buildDropdown(widget.data.periodLabel),
+              _buildDropdown('September 2026'),
               const SizedBox(width: 12),
-              _buildToggleButtons(widget.data.periodType),
+              _buildToggleButtons(),
               const SizedBox(width: 12),
               IconButton(
                 onPressed: () {
@@ -104,7 +93,7 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: isGenerationSelected ? widget.data.maxY : 1000,
+                maxY: 40,
                 barTouchData: BarTouchData(enabled: false),
                 titlesData: FlTitlesData(
                   show: true,
@@ -130,11 +119,8 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
                       reservedSize: 40,
                       getTitlesWidget: (value, meta) {
                         return Text(
-                          isGenerationSelected
-                              ? value.toInt().toString()
-                              : '${value.toInt()}',
-                          style:
-                              const TextStyle(color: Colors.grey, fontSize: 12),
+                          value.toInt().toString(),
+                          style: const TextStyle(color: Colors.grey, fontSize: 12),
                         );
                       },
                     ),
@@ -157,44 +143,23 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
                   ),
                 ),
                 borderData: FlBorderData(show: false),
-                barGroups: widget.data.bars.asMap().entries.map((e) {
-                  final isHighlight = e.key == widget.data.bars.length - 3;
-                  double y;
-                  if (isGenerationSelected) {
-                    y = e.value.y;
-                  } else {
-                    // Approximate revenue scaling if not provided by backend
-                    y = e.value.y * 25;
-                  }
-                  return BarChartGroupData(
-                    x: e.value.x,
+                barGroups: List.generate(
+                  22,
+                  (i) => BarChartGroupData(
+                    x: i + 1,
                     barRods: [
                       BarChartRodData(
-                        toY: y,
-                        color: isHighlight
-                            ? const Color(0xFF3B82F6)
-                            : const Color(0xFFBAE6FD),
+                        toY: (i == 19) ? 38 : (20 + (i % 5) * 4).toDouble(),
+                        color: (i == 19) ? const Color(0xFF3B82F6) : const Color(0xFFBAE6FD),
                         width: 8,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ],
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-          if (!isGenerationSelected)
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: Text(
-                'Total Revenue: ₹ 2,45,670',
-                style: TextStyle(
-                  color: Color(0xFF0EA5E9),
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
+          ),
         ],
       ),
     );

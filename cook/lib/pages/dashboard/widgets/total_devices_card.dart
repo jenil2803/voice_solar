@@ -28,7 +28,11 @@ class TotalDevicesCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+<<<<<<< HEAD
           border: Border.all(color: const Color(0xFF60A5FA).withValues(alpha: 0.2)),
+=======
+          border: Border.all(color: Color(0x1A9E9E9E)),
+>>>>>>> origin/mildpepper
         ),
         child: const Center(
           child: Text(

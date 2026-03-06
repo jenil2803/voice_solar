@@ -63,6 +63,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
+<<<<<<< HEAD
       return const SizedBox(
         height: 400,
         child: Center(child: CircularProgressIndicator()),
@@ -81,9 +82,13 @@ class _DashboardPageState extends State<DashboardPage> {
     return SingleChildScrollView(
       child: SizedBox(
         width: double.infinity,
+=======
+      return const Center(
+>>>>>>> origin/mildpepper
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+<<<<<<< HEAD
             Text(
               'Namaste, ${_data!.userName}!',
               style: const TextStyle(
@@ -157,8 +162,133 @@ class _DashboardPageState extends State<DashboardPage> {
                   ],
                 );
               },
+=======
+            CircularProgressIndicator(color: Color(0xFF0EA5E9)),
+            SizedBox(height: 16),
+            Text(
+              'Loading dashboard...',
+              style: TextStyle(color: Color(0xFF64748B)),
+>>>>>>> origin/mildpepper
             ),
           ],
+        ),
+      );
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: Color(0xFFEF4444)),
+              const SizedBox(height: 16),
+              Text(
+                'Failed to load dashboard',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _error!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Color(0xFF64748B)),
+              ),
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                onPressed: _loadData,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Retry'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF0EA5E9),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final data = _data!;
+
+    return RefreshIndicator(
+      onRefresh: _loadData,
+      color: const Color(0xFF0EA5E9),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Namaste, ${data.userName}!',
+                style: const TextStyle(
+                  color: Color(0xFF0EA5E9),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Solar Performance Overview',
+                style: TextStyle(
+                  color: Color(0xFF0EA5E9),
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  bool isLarge = constraints.maxWidth > 1200;
+
+                  return Column(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: isLarge ? 4 : 5,
+                            child: Column(
+                              children: [
+                                EnergyProductionCard(data: data.energyProduction),
+                                const SizedBox(height: 24),
+                                TotalDevicesCard(devices: data.devices),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            flex: isLarge ? 8 : 7,
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: PlantsStatusCard(
+                                            data: data.plantsStatus)),
+                                    const SizedBox(width: 24),
+                                    Expanded(
+                                        child: NetZeroCard(data: data.netZero)),
+                                  ],
+                                ),
+                                const SizedBox(height: 24),
+                                EnergyGenerationChart(data: data.chartData),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      PlantsDetailsTable(plants: data.plants),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
