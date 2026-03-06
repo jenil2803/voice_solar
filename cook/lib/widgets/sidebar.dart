@@ -63,7 +63,7 @@ class Sidebar extends StatelessWidget {
           const SizedBox(height: 16),
 
           _NavItem(
-            icon: Icons.book_outlined,
+            assetIcon: 'assets/icons/inverter_icon.png',
             isActive: location.startsWith('/inverters'),
             onTap: () => context.go('/inverters'),
           ),
@@ -71,7 +71,7 @@ class Sidebar extends StatelessWidget {
           const SizedBox(height: 16),
 
           _NavItem(
-            icon: Icons.sync,
+            assetIcon: 'assets/icons/sync_icon.png',
             isActive: location.startsWith('/sync'),
             onTap: () {},
           ),
@@ -79,7 +79,7 @@ class Sidebar extends StatelessWidget {
           const SizedBox(height: 16),
 
           _NavItem(
-            icon: Icons.wifi,
+            assetIcon: 'assets/icons/sensors_icon.png',
             isActive: location.startsWith('/sensors'),
             onTap: () => context.go('/sensors'),
           ),
@@ -87,7 +87,7 @@ class Sidebar extends StatelessWidget {
           const SizedBox(height: 16),
 
           _NavItem(
-            icon: Icons.logout_outlined,
+            assetIcon: 'assets/icons/logout_outlined_icon.png',
             isActive: false,
             onTap: () {},
           ),
@@ -118,17 +118,19 @@ class Sidebar extends StatelessWidget {
 }
 
 class _NavItem extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final String? assetIcon;
   final bool isActive;
   final VoidCallback onTap;
   final bool hasBadge;
 
   const _NavItem({
-    required this.icon,
+    this.icon,
+    this.assetIcon,
     required this.isActive,
     required this.onTap,
     this.hasBadge = false,
-  });
+  }) : assert(icon != null || assetIcon != null);
 
   @override
   Widget build(BuildContext context) {
@@ -152,12 +154,22 @@ class _NavItem extends StatelessWidget {
                     ]
                   : null,
             ),
-            child: Icon(
-              icon,
-              color:
-                  isActive ? const Color(0xFF0EA5E9) : const Color(0xFF64748B),
-              size: 24,
-            ),
+            child: assetIcon != null
+                ? Image.asset(
+                    assetIcon!,
+                    color: isActive
+                        ? const Color(0xFF0EA5E9)
+                        : const Color(0xFF64748B),
+                    width: 24,
+                    height: 24,
+                  )
+                : Icon(
+                    icon,
+                    color: isActive
+                        ? const Color(0xFF0EA5E9)
+                        : const Color(0xFF64748B),
+                    size: 24,
+                  ),
           ),
           if (hasBadge)
             Positioned(
