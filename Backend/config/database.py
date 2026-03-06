@@ -1,15 +1,13 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-import mongomock
 
 # MongoDB Connection URL
-MONGO_URL = "mongodb+srv://solaradmin:strongpassword123@solar-monitoring-cluste.9drs1o7.mongodb.net/?appName=solar-monitoring-cluster"
+MONGO_URL = "mongodb+srv://solaradmin:strongpassword123@solar-monitoring-cluste.9drs1o7.mongodb.net/solar_monitoring_system?retryWrites=true&w=majority"
 
 # Database Name
 DATABASE_NAME = "solar_monitoring_system"
 
 # Create MongoDB Client
-# client = AsyncIOMotorClient(MONGO_URL)
-client = mongomock.MongoClient()
+client = AsyncIOMotorClient(MONGO_URL)
 
 # Select Database
 db = client[DATABASE_NAME]

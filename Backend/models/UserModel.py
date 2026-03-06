@@ -13,8 +13,8 @@ class User(BaseModel):
 
     @validator("password", pre=True, always=True)
     def encrypt_password(cls, v):
-        return bcrypt.hashpw(v.encode("utf-8"), bcrypt.gensalt())
-
+        hashed = bcrypt.hashpw(v.encode("utf-8"), bcrypt.gensalt())
+        return hashed.decode("utf-8")
 
 class UserOut(User):
 

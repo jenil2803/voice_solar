@@ -8,7 +8,9 @@ import bcrypt
 
 async def addUser(user: User):
 
-    result = await user_collection.insert_one(user.dict())
+    new_user = user.dict()
+
+    await user_collection.insert_one(new_user)
 
     return JSONResponse(
         status_code=201,
