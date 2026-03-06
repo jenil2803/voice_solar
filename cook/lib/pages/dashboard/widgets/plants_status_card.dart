@@ -17,11 +17,7 @@ class PlantsStatusCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-<<<<<<< HEAD
-        color: Colors.white,
-=======
         color: const Color(0xFFF8FAFC),
->>>>>>> origin/mildpepper
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFF60A5FA).withValues(alpha: 0.2)),
       ),

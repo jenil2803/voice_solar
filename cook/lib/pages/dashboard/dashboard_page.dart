@@ -63,112 +63,15 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-<<<<<<< HEAD
-      return const SizedBox(
-        height: 400,
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (_error != null) {
-      return SizedBox(
-        height: 400,
-        child: Center(child: Text('Error: $_error')),
-      );
-    }
-
-    if (_data == null) return const SizedBox();
-
-    return SingleChildScrollView(
-      child: SizedBox(
-        width: double.infinity,
-=======
       return const Center(
->>>>>>> origin/mildpepper
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-<<<<<<< HEAD
-            Text(
-              'Namaste, ${_data!.userName}!',
-              style: const TextStyle(
-                color: Color(0xFF0EA5E9),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Solar Performance Overview',
-              style: TextStyle(
-                color: Color(0xFF0EA5E9),
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 32),
-
-            LayoutBuilder(
-              builder: (context, constraints) {
-                bool isLarge = constraints.maxWidth > 1200;
-                final double leftFlex = isLarge ? 4 : 3;
-                final double rightFlex = isLarge ? 8 : 7;
-
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Left Column (Narrow)
-                    Expanded(
-                      flex: leftFlex.toInt(),
-                      child: Column(
-                        children: [
-                          EnergyProductionCard(data: _data!.energyProduction),
-                          const SizedBox(height: 24),
-                          TotalDevicesCard(devices: _data!.devices),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(width: 24),
-
-                    // Right Column (Wide)
-                    Expanded(
-                      flex: rightFlex.toInt(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          IntrinsicHeight(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                  child: PlantsStatusCard(
-                                      data: _data!.plantsStatus),
-                                ),
-                                const SizedBox(width: 24),
-                                Expanded(
-                                  child: NetZeroCard(data: _data!.netZero),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          EnergyGenerationChart(data: _data!.chartData),
-                          const SizedBox(height: 24),
-                          PlantsDetailsTable(plants: _data!.plants),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              },
-=======
             CircularProgressIndicator(color: Color(0xFF0EA5E9)),
             SizedBox(height: 16),
             Text(
               'Loading dashboard...',
               style: TextStyle(color: Color(0xFF64748B)),
->>>>>>> origin/mildpepper
             ),
           ],
         ),

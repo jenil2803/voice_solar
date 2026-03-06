@@ -1,0 +1,40 @@
+﻿Resolving dependencies...
+Downloading packages...
+  meta 1.17.0 (1.18.1 available)
+Got dependencies!
+1 package has newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing cook...                                               
+
+  error - Expected an identifier - lib\pages\dashboard\widgets\plants_status_card.dart:20:1 - missing_identifier
+  error - Too many positional arguments: 0 expected, but 2 found - lib\pages\dashboard\widgets\plants_status_card.dart:20:1 - extra_positional_arguments_could_be_named
+  error - Expected an identifier - lib\pages\dashboard\widgets\plants_status_card.dart:20:3 - missing_identifier
+  error - Expected an identifier - lib\pages\dashboard\widgets\plants_status_card.dart:20:5 - missing_identifier
+  error - Expected to find '>' - lib\pages\dashboard\widgets\plants_status_card.dart:20:9 - expected_token
+  error - The name 'HEAD' isn't a type, so it can't be used as a type argument - lib\pages\dashboard\widgets\plants_status_card.dart:20:9 - non_type_as_type_argument
+  error - Expected to find ',' - lib\pages\dashboard\widgets\plants_status_card.dart:21:9 - expected_token
+  error - Expected to find '[' - lib\pages\dashboard\widgets\plants_status_card.dart:21:9 - expected_token
+  error - Expected an identifier - lib\pages\dashboard\widgets\plants_status_card.dart:22:1 - missing_identifier
+  error - The '===' operator is not supported - lib\pages\dashboard\widgets\plants_status_card.dart:22:1 - unsupported_operator
+  error - Missing selector such as '.identifier' or '[0]' - lib\pages\dashboard\widgets\plants_status_card.dart:22:4 - missing_assignable_selector
+  error - The '===' operator is not supported - lib\pages\dashboard\widgets\plants_status_card.dart:22:4 - unsupported_operator
+  error - Expected an identifier - lib\pages\dashboard\widgets\plants_status_card.dart:22:7 - missing_identifier
+  error - Undefined name 'color' - lib\pages\dashboard\widgets\plants_status_card.dart:23:9 - undefined_identifier
+  error - Expected to find ')' - lib\pages\dashboard\widgets\plants_status_card.dart:23:14 - expected_token
+  error - Expected an identifier - lib\pages\dashboard\widgets\total_devices_card.dart:31:1 - missing_identifier
+  error - Too many positional arguments: 0 expected, but 2 found - lib\pages\dashboard\widgets\total_devices_card.dart:31:1 - extra_positional_arguments_could_be_named
+  error - Expected an identifier - lib\pages\dashboard\widgets\total_devices_card.dart:31:3 - missing_identifier
+  error - Expected an identifier - lib\pages\dashboard\widgets\total_devices_card.dart:31:5 - missing_identifier
+  error - Expected to find '>' - lib\pages\dashboard\widgets\total_devices_card.dart:31:9 - expected_token
+  error - The name 'HEAD' isn't a type, so it can't be used as a type argument - lib\pages\dashboard\widgets\total_devices_card.dart:31:9 - non_type_as_type_argument
+  error - Expected to find ',' - lib\pages\dashboard\widgets\total_devices_card.dart:32:11 - expected_token
+  error - Expected to find '[' - lib\pages\dashboard\widgets\total_devices_card.dart:32:11 - expected_token
+  error - Expected an identifier - lib\pages\dashboard\widgets\total_devices_card.dart:33:1 - missing_identifier
+  error - The '===' operator is not supported - lib\pages\dashboard\widgets\total_devices_card.dart:33:1 - unsupported_operator
+  error - Missing selector such as '.identifier' or '[0]' - lib\pages\dashboard\widgets\total_devices_card.dart:33:4 - missing_assignable_selector
+  error - The '===' operator is not supported - lib\pages\dashboard\widgets\total_devices_card.dart:33:4 - unsupported_operator
+  error - Expected an identifier - lib\pages\dashboard\widgets\total_devices_card.dart:33:7 - missing_identifier
+  error - Undefined name 'border' - lib\pages\dashboard\widgets\total_devices_card.dart:34:11 - undefined_identifier
+  error - Expected to find ')' - lib\pages\dashboard\widgets\total_devices_card.dart:34:17 - expected_token
+  error - Expected a method, getter, setter or operator declaration - lib\services\dashboard_service.dart:35:1 - expected_executable
+

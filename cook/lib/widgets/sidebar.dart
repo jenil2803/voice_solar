@@ -53,8 +53,6 @@ class Sidebar extends StatelessWidget {
             onTap: () => context.go('/'),
           ),
 
-          const SizedBox(height: 20),
-
           _NavItem(
             icon: LucideIcons.factory,
             isActive: location.startsWith('/plants'),
@@ -64,25 +62,15 @@ class Sidebar extends StatelessWidget {
           const SizedBox(height: 20),
 
           _NavItem(
-<<<<<<< HEAD
-            icon: LucideIcons.bookOpen,
-            isActive: location.startsWith('/reports'),
-            onTap: () => context.go('/reports'),
-=======
             assetIcon: 'assets/icons/inverter_icon.png',
             isActive: location.startsWith('/inverters'),
             onTap: () => context.go('/inverters'),
->>>>>>> origin/mildpepper
           ),
 
           const SizedBox(height: 20),
 
           _NavItem(
-<<<<<<< HEAD
-            icon: LucideIcons.refreshCcw,
-=======
             assetIcon: 'assets/icons/sync_icon.png',
->>>>>>> origin/mildpepper
             isActive: location.startsWith('/sync'),
             onTap: () {},
           ),
@@ -90,25 +78,23 @@ class Sidebar extends StatelessWidget {
           const SizedBox(height: 20),
 
           _NavItem(
-<<<<<<< HEAD
-            icon: LucideIcons.wifi,
-            isActive: location.startsWith('/network'),
-            onTap: () {},
-=======
             assetIcon: 'assets/icons/sensors_icon.png',
             isActive: location.startsWith('/sensors'),
             onTap: () => context.go('/sensors'),
->>>>>>> origin/mildpepper
           ),
 
           const SizedBox(height: 20),
 
           _NavItem(
-<<<<<<< HEAD
-            icon: LucideIcons.logOut,
-=======
+            icon: LucideIcons.bookOpen,
+            isActive: location.startsWith('/reports'),
+            onTap: () => context.go('/reports'),
+          ),
+
+          const SizedBox(height: 20),
+
+          _NavItem(
             assetIcon: 'assets/icons/logout_outlined_icon.png',
->>>>>>> origin/mildpepper
             isActive: false,
             onTap: () {},
           ),
