@@ -18,56 +18,84 @@ class EnergyProductionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Color(0x1A9E9E9E)),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Total Energy Production',
-            style: TextStyle(
-              color: Color(0xFF0EA5E9),
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Energy Production',
+                style: TextStyle(
+                  color: Color(0xFF1E293B),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF22C55E).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Text(
+                  'Live',
+                  style: TextStyle(
+                    color: Color(0xFF22C55E),
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           Center(
             child: SizedBox(
-              height: 150,
-              width: 250,
+              height: 140,
+              width: 240,
               child: Stack(
-                alignment: Alignment.bottomCenter,
+                alignment: Alignment.center,
                 children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFE0F2FE),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(125),
-                        topRight: Radius.circular(125),
-                      ),
+                   // The Gauge
+                  SizedBox(
+                    height: 200,
+                    width: 200,
+                    child: CircularProgressIndicator(
+                      value: data.percentage / 100,
+                      strokeWidth: 12,
+                      backgroundColor: const Color(0xFFF1F5F9),
+                      color: const Color(0xFF0EA5E9),
+                      strokeCap: StrokeCap.round,
                     ),
                   ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        data.todayKwh,
+                        '${data.percentage.toStringAsFixed(1)}%',
                         style: const TextStyle(
-                            color: Color(0xFF0EA5E9), fontSize: 14),
-                      ),
-                      Text(
-                        '${data.percentage.toStringAsFixed(2)}%',
-                        style: const TextStyle(
-                          color: Color(0xFF0EA5E9),
-                          fontSize: 28,
+                          color: Color(0xFF1E293B),
+                          fontSize: 32,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const Text(
-                        'Today\'s generation',
-                        style: TextStyle(
-                            color: Color(0xFF64748B), fontSize: 12),
+                      Text(
+                        data.todayKwh,
+                        style: const TextStyle(
+                          color: Color(0xFF64748B),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),
@@ -75,12 +103,14 @@ class EnergyProductionCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
+          const Divider(color: Color(0xFFF1F5F9)),
+          const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildStat('Total Production', data.totalProduction),
-              _buildStat('Total Capacity', data.totalCapacity),
+              _buildStat('Total', data.totalProduction, Icons.bolt),
+              const Spacer(),
+              _buildStat('Capacity', data.totalCapacity, Icons.battery_charging_full),
             ],
           )
         ],
@@ -88,31 +118,29 @@ class EnergyProductionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStat(String label, String value) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Color(0xFF0EA5E9),
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+  Widget _buildStat(String label, String value, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: const Color(0xFF94A3B8)),
+        const SizedBox(width: 8),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 11),
             ),
-          ),
-        ],
-      ),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Color(0xFF334155),
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

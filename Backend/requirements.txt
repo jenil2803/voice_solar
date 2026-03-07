@@ -1,0 +1,15 @@
+fastapi==0.115.0
+uvicorn==0.30.6
+motor==3.5.1
+pymongo==4.8.0
+pydantic==2.8.2
+bcrypt==4.2.0
+python-dotenv==1.0.1
+python-multipart==0.0.9
+email-validator==2.2.0
+dnspython==2.6.1
+mongomock==4.1.2
+# AI Agent Dependencies
+google-genai
+json5
+# (Note: FastApi, Pydantic, and re are already included or built-in, no new pip packages were required for the backend routing logic.)

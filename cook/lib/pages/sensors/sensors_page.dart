@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../models/sensor_model.dart';
 
 class SensorsPage extends StatefulWidget {
   const SensorsPage({super.key});
@@ -8,10 +9,40 @@ class SensorsPage extends StatefulWidget {
 }
 
 class _SensorsPageState extends State<SensorsPage> {
-  String selectedTab = 'MFM';
+  String selectedTab = 'All';
+  String searchQuery = '';
+
+  String _formatDate(DateTime date) {
+    String pad(int n) => n.toString().padLeft(2, '0');
+    final month = pad(date.month);
+    final day = pad(date.day);
+    final year = date.year;
+    
+    int hour = date.hour;
+    final period = hour >= 12 ? 'PM' : 'AM';
+    if (hour > 12) hour -= 12;
+    if (hour == 0) hour = 12;
+    
+    final minute = pad(date.minute);
+    final second = pad(date.second);
+    
+    return '$month/$day/$year, $hour:$minute:$second $period';
+  }
+
+  List<SensorModel> get filteredSensors {
+    var list = selectedTab.toLowerCase() == 'all' 
+        ? mockSensorsDatabase 
+        : mockSensorsDatabase.where((s) => s.category.toLowerCase() == selectedTab.toLowerCase()).toList();
+    if (searchQuery.isNotEmpty) {
+      list = list.where((s) => s.deviceName.toLowerCase().contains(searchQuery.toLowerCase()) || 
+                               s.manufacturer.toLowerCase().contains(searchQuery.toLowerCase())).toList();
+    }
+    return list;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final sensors = filteredSensors;
     return Padding(
       padding: const EdgeInsets.all(32.0),
       child: Column(
@@ -47,7 +78,7 @@ class _SensorsPageState extends State<SensorsPage> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        '(25)',
+                        '(${sensors.length})',
                         style: TextStyle(
                           color: const Color(0xFF0EA5E9).withValues(alpha: 0.7),
                           fontSize: 20,
@@ -69,9 +100,10 @@ class _SensorsPageState extends State<SensorsPage> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _buildTab('MFM', isFirst: true),
+                        _buildTab('All', isFirst: true),
                         _buildTab('WMS'),
-                        _buildTab('Radiation Sensor', isLast: true),
+                        _buildTab('MFM'),
+                        _buildTab('Temperature', isLast: true),
                       ],
                     ),
                   ),
@@ -80,31 +112,17 @@ class _SensorsPageState extends State<SensorsPage> {
 
               Row(
                 children: [
-                  // Filter Button
-                  OutlinedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.filter_alt_outlined,
-                        color: Color(0xFF0EA5E9)),
-                    label: const Text(
-                      'Filter',
-                      style: TextStyle(color: Color(0xFF0EA5E9)),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                          color: const Color(0xFF0EA5E9).withValues(alpha: 0.3)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 16),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
+                  
 
                   // Search Field
                   SizedBox(
                     width: 250,
                     child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          searchQuery = value;
+                        });
+                      },
                       decoration: InputDecoration(
                         hintText: 'Search Devices',
                         hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
@@ -186,7 +204,7 @@ class _SensorsPageState extends State<SensorsPage> {
                         Expanded(
                           flex: 2,
                           child: Text(
-                            'Value',
+                            'Manufacturer',
                             style: TextStyle(
                               color: Color(0xFF64748B),
                               fontWeight: FontWeight.w600,
@@ -210,24 +228,14 @@ class _SensorsPageState extends State<SensorsPage> {
                   // Table Body (Scrollable)
                   Expanded(
                     child: ListView.builder(
-                      itemCount: 8, // Mock data count
+                      itemCount: sensors.length,
                       itemBuilder: (context, index) {
+                        final sensor = sensors[index];
                         return Container(
                           color: index.isOdd 
                               ? const Color(0xFFF8FAFC) 
                               : Colors.white,
-                          child: _buildTableRow(
-                            deviceName: 'Kutch Plant',
-                            category: '36489 Kwh',
-                            value: '36489 Kwh',
-                            createdOn: 'Jan 10, 8:00 AM',
-                            // Different colors based on index for the mockup
-                            statusColor: index == 0
-                                ? Colors.orange
-                                : index == 7
-                                    ? Colors.red
-                                    : Colors.green,
-                          ),
+                          child: _buildTableRow(sensor),
                         );
                       },
                     ),
@@ -284,58 +292,53 @@ class _SensorsPageState extends State<SensorsPage> {
     );
   }
 
-  Widget _buildTableRow({
-    required String deviceName,
-    required String category,
-    required String value,
-    required String createdOn,
-    required Color statusColor,
-  }) {
+  Widget _buildTableRow(SensorModel sensor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
       child: Row(
         children: [
           Expanded(
             flex: 2,
-            child: Row(
-              children: [
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: statusColor,
-                    shape: BoxShape.circle,
-                  ),
+            child: Text(
+              sensor.deviceName,
+              style: const TextStyle(
+                color: Color(0xFF1E293B),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                decoration: BoxDecoration(
+                  color: sensor.categoryColor,
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                const SizedBox(width: 16),
-                Text(
-                  deviceName,
+                child: Text(
+                  sensor.category.toLowerCase(),
                   style: const TextStyle(
-                    color: Color(0xFF1E293B),
-                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
                   ),
                 ),
-              ],
+              ),
             ),
           ),
           Expanded(
             flex: 2,
             child: Text(
-              category,
+              sensor.manufacturer,
               style: const TextStyle(color: Color(0xFF475569)),
             ),
           ),
           Expanded(
             flex: 2,
             child: Text(
-              value,
-              style: const TextStyle(color: Color(0xFF475569)),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              createdOn,
+              _formatDate(sensor.createdOn),
               style: const TextStyle(color: Color(0xFF475569)),
             ),
           ),

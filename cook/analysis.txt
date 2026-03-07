@@ -1,0 +1,13 @@
+Resolving dependencies...
+Downloading packages...
+  meta 1.17.0 (1.18.1 available)
+Got dependencies!
+1 package has newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing cook...                                               
+
+warning - Unused import: 'widgets/energy_revenue_chart.dart' - lib\pages\dashboard\dashboard_page.dart:9:8 - unused_import
+  error - The method 'EnergyRevenueChart' isn't defined for the type '_DashboardPageState' - lib\pages\dashboard\dashboard_page.dart:146:31 - undefined_method
+  error - Expected an identifier - lib\pages\dashboard\widgets\plants_details_table.dart:196:11 - missing_identifier
+  error - Expected to find ']' - lib\pages\dashboard\widgets\plants_details_table.dart:196:11 - expected_token
+

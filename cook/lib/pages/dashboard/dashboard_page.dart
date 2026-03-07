@@ -26,6 +26,8 @@ class _DashboardPageState extends State<DashboardPage> {
   DashboardData? _data;
   bool _isLoading = true;
   String? _error;
+  ChartPeriodType _currentPeriod = ChartPeriodType.monthly;
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -33,9 +35,6 @@ class _DashboardPageState extends State<DashboardPage> {
     _loadData();
   }
 
-  /// Fetches dashboard data. Called on init and can be used for pull-to-refresh.
-  /// BACKEND: This triggers [DashboardService.getDashboardData] - replace that
-  /// method's implementation to call your MongoDB/API.
   Future<void> _loadData() async {
     setState(() {
       _isLoading = true;
@@ -43,7 +42,7 @@ class _DashboardPageState extends State<DashboardPage> {
     });
 
     try {
-      final data = await _dashboardService.getDashboardData();
+      final data = await _dashboardService.getDashboardData(period: _currentPeriod);
       if (mounted) {
         setState(() {
           _data = data;
@@ -58,6 +57,14 @@ class _DashboardPageState extends State<DashboardPage> {
         });
       }
     }
+  }
+
+  void _updatePeriod(ChartPeriodType period) {
+    if (_currentPeriod == period) return;
+    setState(() {
+      _currentPeriod = period;
+    });
+    _loadData();
   }
 
   @override
@@ -124,28 +131,74 @@ class _DashboardPageState extends State<DashboardPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Namaste, ${data.userName}!',
-                style: const TextStyle(
-                  color: Color(0xFF0EA5E9),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Solar Performance Overview',
-                style: TextStyle(
-                  color: Color(0xFF0EA5E9),
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Namaste, ${data.userName}!',
+                        style: TextStyle(
+                          color: const Color(0xFF64748B),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Solar Performance',
+                        style: TextStyle(
+                          color: Color(0xFF1E293B),
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          height: 1.1,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                ],
               ),
               const SizedBox(height: 32),
 
               LayoutBuilder(
                 builder: (context, constraints) {
                   bool isLarge = constraints.maxWidth > 1200;
+                  bool isSmall = constraints.maxWidth < 900;
+                  bool isMobile = constraints.maxWidth < 600;
+
+                  if (isSmall) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        EnergyProductionCard(data: data.energyProduction),
+                        const SizedBox(height: 24),
+                        TotalDevicesCard(devices: data.devices),
+                        const SizedBox(height: 24),
+                        if (isMobile) ...[
+                          PlantsStatusCard(data: data.plantsStatus),
+                          const SizedBox(height: 24),
+                          NetZeroCard(data: data.netZero),
+                        ] else
+                          Row(
+                            children: [
+                              Expanded(child: PlantsStatusCard(data: data.plantsStatus)),
+                              const SizedBox(width: 16),
+                              Expanded(child: NetZeroCard(data: data.netZero)),
+                            ],
+                          ),
+                        const SizedBox(height: 24),
+                        EnergyGenerationChart(
+                          data: data.chartData,
+                          onPeriodChanged: _updatePeriod,
+                        ),
+                        const SizedBox(height: 24),
+                        PlantsDetailsTable(plants: data.plants),
+                      ],
+                    );
+                  }
 
                   return Column(
                     children: [
@@ -178,7 +231,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                   ],
                                 ),
                                 const SizedBox(height: 24),
-                                EnergyGenerationChart(data: data.chartData),
+                                EnergyGenerationChart(
+                                  data: data.chartData,
+                                  onPeriodChanged: _updatePeriod,
+                                ),
                               ],
                             ),
                           ),

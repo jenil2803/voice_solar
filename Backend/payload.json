@@ -1,0 +1,188 @@
+﻿{
+    "userName":  "Dhruti",
+    "energyProduction":  {
+                             "todayKwh":  "20 kWh",
+                             "percentage":  50.75,
+                             "totalProduction":  "42.8 kWh",
+                             "totalCapacity":  "42.8 kWh"
+                         },
+    "devices":  [
+                    {
+                        "type":  "MFM",
+                        "count":  5,
+                        "flex":  5
+                    },
+                    {
+                        "type":  "WFM",
+                        "count":  1,
+                        "flex":  1
+                    },
+                    {
+                        "type":  "SLMS",
+                        "count":  2,
+                        "flex":  2
+                    },
+                    {
+                        "type":  "Inverters",
+                        "count":  4,
+                        "flex":  4
+                    }
+                ],
+    "plantsStatus":  {
+                         "totalPlants":  45,
+                         "active":  30,
+                         "alert":  10,
+                         "partiallyActive":  10,
+                         "expired":  10
+                     },
+    "netZero":  {
+                    "co2Reduced":  "1.03k",
+                    "coalSaved":  "1.4 T",
+                    "treesPlanted":  "155K"
+                },
+    "chartData":  {
+                      "periodLabel":  "September 2026",
+                      "periodType":  "yearly",
+                      "bars":  [
+                                   {
+                                       "x":  1,
+                                       "y":  20.0
+                                   },
+                                   {
+                                       "x":  2,
+                                       "y":  24.0
+                                   },
+                                   {
+                                       "x":  3,
+                                       "y":  28.0
+                                   },
+                                   {
+                                       "x":  4,
+                                       "y":  32.0
+                                   },
+                                   {
+                                       "x":  5,
+                                       "y":  36.0
+                                   },
+                                   {
+                                       "x":  6,
+                                       "y":  20.0
+                                   },
+                                   {
+                                       "x":  7,
+                                       "y":  24.0
+                                   },
+                                   {
+                                       "x":  8,
+                                       "y":  28.0
+                                   },
+                                   {
+                                       "x":  9,
+                                       "y":  32.0
+                                   },
+                                   {
+                                       "x":  10,
+                                       "y":  36.0
+                                   },
+                                   {
+                                       "x":  11,
+                                       "y":  20.0
+                                   },
+                                   {
+                                       "x":  12,
+                                       "y":  24.0
+                                   },
+                                   {
+                                       "x":  13,
+                                       "y":  28.0
+                                   },
+                                   {
+                                       "x":  14,
+                                       "y":  32.0
+                                   },
+                                   {
+                                       "x":  15,
+                                       "y":  36.0
+                                   },
+                                   {
+                                       "x":  16,
+                                       "y":  20.0
+                                   },
+                                   {
+                                       "x":  17,
+                                       "y":  24.0
+                                   },
+                                   {
+                                       "x":  18,
+                                       "y":  28.0
+                                   },
+                                   {
+                                       "x":  19,
+                                       "y":  32.0
+                                   },
+                                   {
+                                       "x":  20,
+                                       "y":  38.0
+                                   },
+                                   {
+                                       "x":  21,
+                                       "y":  20.0
+                                   },
+                                   {
+                                       "x":  22,
+                                       "y":  24.0
+                                   }
+                               ],
+                      "maxY":  40.0
+                  },
+    "plants":  [
+                   {
+                       "name":  "Kutch Plant",
+                       "status":  "partiallyActive",
+                       "todayKwh":  "36489 Kwh",
+                       "totalKwh":  "36489 Kwh",
+                       "capacityKwh":  "36489 Kwh",
+                       "lastUpdated":  "Jan 10, 8:00 AM"
+                   },
+                   {
+                       "name":  "Plant 2",
+                       "status":  "active",
+                       "todayKwh":  "36489 Kwh",
+                       "totalKwh":  "36489 Kwh",
+                       "capacityKwh":  "36489 Kwh",
+                       "lastUpdated":  "Jan 10, 8:00 AM"
+                   },
+                   {
+                       "name":  "Plant 3",
+                       "status":  "active",
+                       "todayKwh":  "36489 Kwh",
+                       "totalKwh":  "36489 Kwh",
+                       "capacityKwh":  "36489 Kwh",
+                       "lastUpdated":  "Jan 10, 8:00 AM"
+                   },
+                   {
+                       "name":  "Plant 4",
+                       "status":  "active",
+                       "todayKwh":  "36489 Kwh",
+                       "totalKwh":  "36489 Kwh",
+                       "capacityKwh":  "36489 Kwh",
+                       "lastUpdated":  "Jan 10, 8:00 AM"
+                   },
+                   {
+                       "name":  "Plant 5",
+                       "status":  "active",
+                       "todayKwh":  "36489 Kwh",
+                       "totalKwh":  "36489 Kwh",
+                       "capacityKwh":  "36489 Kwh",
+                       "lastUpdated":  "Jan 10, 8:00 AM"
+                   },
+                   {
+                       "name":  "Plant 6",
+                       "status":  "expired",
+                       "todayKwh":  "36489 Kwh",
+                       "totalKwh":  "36489 Kwh",
+                       "capacityKwh":  "36489 Kwh",
+                       "lastUpdated":  "Jan 10, 8:00 AM"
+                   }
+               ]
+}
