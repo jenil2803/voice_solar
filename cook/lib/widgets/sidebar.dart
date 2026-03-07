@@ -22,9 +22,15 @@ class Sidebar extends StatelessWidget {
           ),
         ),
       ),
-      child: Column(
-        children: [
-          const SizedBox(height: 32),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 32),
 
           // Logo placeholder
           Container(
@@ -78,11 +84,7 @@ class Sidebar extends StatelessWidget {
             onTap: () => context.go('/sensors'),
           ),
 
-          const SizedBox(height: 20),
-
-          
-
-          const SizedBox(height: 20),
+          const Spacer(),
 
           _NavItem(
             assetIcon: 'assets/icons/logout_outlined_icon.png',
@@ -93,10 +95,13 @@ class Sidebar extends StatelessWidget {
             },
           ),
 
-          const Spacer(),
-
-
-        ],
+          const SizedBox(height: 32),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
