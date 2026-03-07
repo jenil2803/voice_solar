@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:permission_handler/permission_handler.dart';
+import '../services/agent_service.dart';
 
 class AIAgentDialog extends StatefulWidget {
   const AIAgentDialog({super.key});
@@ -81,50 +80,40 @@ class _AIAgentDialogState extends State<AIAgentDialog> {
 
   Future<void> _sendCommand(String text) async {
     if (text.trim().isEmpty) return;
-    
+
     setState(() {
       _isLoading = true;
       _responseMessage = "Thinking...";
     });
 
     try {
-      final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/agent/command/'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'text': text}),
-      );
+      final data = await AgentService.sendCommand(text);
+      final action = data['action'] as String? ?? 'unknown';
+      final message = data['message'] as String? ?? 'Done.';
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final action = data['action'];
-        final message = data['message'] ?? 'Done.';
-        
-        setState(() {
-          _responseMessage = message;
-        });
+      setState(() => _responseMessage = message);
 
-        if (action == 'navigate' && data['route'] != null) {
-          // Add a tiny delay so the user can read the message before it routes
-          Future.delayed(const Duration(milliseconds: 700), () {
-            if (mounted) {
-              Navigator.of(context).pop(); // close dialog
-              context.go(data['route']); // navigate via go_router
-            }
-          });
-        }
-      } else {
-        setState(() {
-          _responseMessage = "Sorry, I encountered an error communicating with the server.";
+      if (action == 'navigate' && data['route'] != null) {
+        // For deep routes (/inverters/:id) the backend already resolved
+        // params.id to a real MongoDB _id and replaced :id in the route.
+        // We just navigate directly.
+        final route = data['route'] as String;
+        Future.delayed(const Duration(milliseconds: 800), () {
+          if (mounted) {
+            Navigator.of(context).pop();
+            context.go(route);
+          }
         });
       }
+      // For 'query' and 'action' we already set _responseMessage above,
+      // so the user sees the result inline without any navigation.
+
     } catch (e) {
       setState(() {
         _responseMessage = "Network error. Make sure the backend is running.";
       });
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
       _controller.clear();
     }
   }
@@ -199,7 +188,7 @@ class _AIAgentDialogState extends State<AIAgentDialog> {
                   controller: _controller,
                   enabled: !_isLoading,
                   decoration: InputDecoration(
-                    hintText: 'e.g. "Take me to plants"',
+                    hintText: 'e.g. "How much energy today?" or "Show inverter 3"',
                     hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
                     filled: true,
                     fillColor: Colors.white,
