@@ -340,11 +340,14 @@ class _InvertersPageState extends State<InvertersPage> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Text(
-                  deviceName,
-                  style: const TextStyle(
-                    color: Color(0xFF1E293B),
-                    fontWeight: FontWeight.w500,
+                Expanded(
+                  child: Text(
+                    deviceName,
+                    style: const TextStyle(
+                      color: Color(0xFF1E293B),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
