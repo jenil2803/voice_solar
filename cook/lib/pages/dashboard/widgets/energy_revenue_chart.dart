@@ -90,18 +90,7 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
               _buildDropdown(widget.data.periodLabel),
               const SizedBox(width: 12),
               _buildToggleButtons(widget.data.periodType),
-              const SizedBox(width: 12),
-              IconButton(
-                onPressed: () {
-                  // TODO: Backend - add export/download endpoint
-                },
-                icon: const Icon(Icons.download, color: Colors.white),
-                style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xFF60A5FA),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                ),
-              )
+
             ],
           ),
           const SizedBox(height: 24),
@@ -120,7 +109,6 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
                         getTitlesWidget: (value, meta) {
                           String text = '';
                           if (widget.data.periodType == ChartPeriodType.monthly) {
-                            // Show every 5 days to avoid clutter
                             if (value.toInt() % 5 == 0 || value.toInt() == 1) {
                               text = value.toInt().toString();
                             }
@@ -206,9 +194,7 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
                           borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                           backDrawRodData: BackgroundBarChartRodData(
                             show: true,
-                            toY: isGenerationSelected 
-                                ? widget.data.maxY
-                                : widget.data.maxY,  
+                            toY: widget.data.maxY * (isGenerationSelected ? 1 : 8),
                             color: const Color(0xFFF1F5F9),
                           ),
                         ),

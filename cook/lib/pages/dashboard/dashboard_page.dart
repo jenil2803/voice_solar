@@ -158,50 +158,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                     ],
                   ),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(100),
-                    onTap: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: _selectedDate,
-                        firstDate: DateTime(2020),
-                        lastDate: DateTime(2030),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: const ColorScheme.light(
-                                primary: Color(0xFF0EA5E9), 
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (picked != null) {
-                        setState(() => _selectedDate = picked);
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0EA5E9).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.calendar_today, size: 16, color: Color(0xFF0EA5E9)),
-                          const SizedBox(width: 8),
-                          Text(
-                            _selectedDate.toString().split(' ')[0], 
-                            style: const TextStyle(
-                              color: Color(0xFF0EA5E9),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+
                 ],
               ),
               const SizedBox(height: 32),
