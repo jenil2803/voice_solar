@@ -14,6 +14,10 @@ class Plant(BaseModel):
     latitude: float
     longitude: float
     status: str
+    todayKwh: str
+    totalKwh: str
+    capacityKwh: str
+    lastUpdated: str
 
 
 class PlantOut(Plant):

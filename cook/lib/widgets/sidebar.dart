@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../services/auth_service.dart';
+
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key});
 
@@ -20,9 +22,15 @@ class Sidebar extends StatelessWidget {
           ),
         ),
       ),
-      child: Column(
-        children: [
-          const SizedBox(height: 32),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 32),
 
           // Logo placeholder
           Container(
@@ -69,13 +77,6 @@ class Sidebar extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          _NavItem(
-            assetIcon: 'assets/icons/sync_icon.png',
-            isActive: location.startsWith('/sync'),
-            onTap: () {},
-          ),
-
-          const SizedBox(height: 20),
 
           _NavItem(
             assetIcon: 'assets/icons/sensors_icon.png',
@@ -83,48 +84,30 @@ class Sidebar extends StatelessWidget {
             onTap: () => context.go('/sensors'),
           ),
 
-          const SizedBox(height: 20),
-
-          _NavItem(
-            icon: LucideIcons.bookOpen,
-            isActive: location.startsWith('/reports'),
-            onTap: () => context.go('/reports'),
-          ),
-
-          const SizedBox(height: 20),
+          const Spacer(),
 
           _NavItem(
             assetIcon: 'assets/icons/logout_outlined_icon.png',
             isActive: false,
-            onTap: () {},
-          ),
-
-          const Spacer(),
-
-          // Bottom Icons
-          _NavItem(
-            icon: LucideIcons.bell,
-            isActive: false,
-            onTap: () {},
-            hasBadge: true,
-          ),
-
-          const SizedBox(height: 20),
-
-          _NavItem(
-            icon: LucideIcons.userPlus,
-            isActive: false,
-            onTap: () {},
+            onTap: () {
+              authService.logout();
+              context.go('/login');
+            },
           ),
 
           const SizedBox(height: 32),
-        ],
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
-class _NavItem extends StatelessWidget {
+class _NavItem extends StatefulWidget {
   final IconData? icon;
   final String? assetIcon;
   final bool isActive;
@@ -140,58 +123,75 @@ class _NavItem extends StatelessWidget {
   }) : assert(icon != null || assetIcon != null);
 
   @override
+  State<_NavItem> createState() => _NavItemState();
+}
+
+class _NavItemState extends State<_NavItem> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Stack(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: isActive ? Colors.white : Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: isActive
-                  ? [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      )
-                    ]
-                  : null,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Stack(
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: widget.isActive
+                    ? Colors.white
+                    : (_isHovered
+                        ? Colors.grey.withValues(alpha: 0.1)
+                        : Colors.transparent),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: widget.isActive
+                    ? [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        )
+                      ]
+                    : null,
+              ),
+              child: widget.assetIcon != null
+                  ? Image.asset(
+                      widget.assetIcon!,
+                      color: widget.isActive || _isHovered
+                          ? const Color(0xFF0EA5E9)
+                          : const Color(0xFF64748B),
+                      width: 24,
+                      height: 24,
+                    )
+                  : Icon(
+                      widget.icon,
+                      color: widget.isActive || _isHovered
+                          ? const Color(0xFF0EA5E9)
+                          : const Color(0xFF64748B),
+                      size: 24,
+                    ),
             ),
-            child: assetIcon != null
-                ? Image.asset(
-                    assetIcon!,
-                    color: isActive
-                        ? const Color(0xFF0EA5E9)
-                        : const Color(0xFF64748B),
-                    width: 24,
-                    height: 24,
-                  )
-                : Icon(
-                    icon,
-                    color: isActive
-                        ? const Color(0xFF0EA5E9)
-                        : const Color(0xFF64748B),
-                    size: 24,
+            if (widget.hasBadge)
+              Positioned(
+                right: 12,
+                top: 12,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF0EA5E9),
+                    shape: BoxShape.circle,
                   ),
-          ),
-          if (hasBadge)
-            Positioned(
-              right: 12,
-              top: 12,
-              child: Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF0EA5E9),
-                  shape: BoxShape.circle,
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

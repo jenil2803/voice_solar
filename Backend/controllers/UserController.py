@@ -35,7 +35,7 @@ async def loginUser(request: UserLogin):
     if not foundUser:
         raise HTTPException(status_code=404, detail="User not found")
 
-    if bcrypt.checkpw(request.password.encode(), foundUser["password"]):
+    if bcrypt.checkpw(request.password.encode('utf-8'), foundUser["password"].encode('utf-8')):
 
         foundUser["_id"] = str(foundUser["_id"])
 

@@ -19,7 +19,15 @@ async def seed():
     await db["plants"].delete_many({})
     await db["plants"].insert_many([
         {
-            "name": "Kutch Plant",
+            "plant_name": "Kutch Plant",
+            "plant_type": "Ground Mount",
+            "installation_date": "2020-05-12",
+            "address": "Solar Park, Bhadla",
+            "country": "India",
+            "state": "Gujarat",
+            "city": "Bhuj",
+            "latitude": 23.25,
+            "longitude": 69.66,
             "status": "partiallyActive",
             "todayKwh": "36489 Kwh",
             "totalKwh": "36489 Kwh",
@@ -27,7 +35,15 @@ async def seed():
             "lastUpdated": "Jan 10, 8:00 AM",
         },
         {
-            "name": "Ahmedabad Solar",
+            "plant_name": "Ahmedabad Solar",
+            "plant_type": "Rooftop Integration",
+            "installation_date": "2022-11-01",
+            "address": "SG Highway Tech Park",
+            "country": "India",
+            "state": "Gujarat",
+            "city": "Ahmedabad",
+            "latitude": 23.02,
+            "longitude": 72.57,
             "status": "active",
             "todayKwh": "42000 Kwh",
             "totalKwh": "1.2M Kwh",
@@ -35,12 +51,84 @@ async def seed():
             "lastUpdated": "Jan 10, 9:30 AM",
         },
         {
-            "name": "Surat Roof",
+            "plant_name": "Surat Roof",
+            "plant_type": "Commercial Rooftop",
+            "installation_date": "2021-08-15",
+            "address": "Textile Hub Center",
+            "country": "India",
+            "state": "Gujarat",
+            "city": "Surat",
+            "latitude": 21.17,
+            "longitude": 72.83,
             "status": "alert",
             "todayKwh": "12000 Kwh",
             "totalKwh": "500K Kwh",
             "capacityKwh": "25000 Kwh",
             "lastUpdated": "Jan 10, 10:15 AM",
+        },
+        {
+            "plant_name": "Jodhpur Station",
+            "plant_type": "Utility Scale",
+            "installation_date": "2019-02-20",
+            "address": "Desert Tech Center",
+            "country": "India",
+            "state": "Rajasthan",
+            "city": "Jodhpur",
+            "latitude": 26.23,
+            "longitude": 73.02,
+            "status": "active",
+            "todayKwh": "89000 Kwh",
+            "totalKwh": "4.5M Kwh",
+            "capacityKwh": "100000 Kwh",
+            "lastUpdated": "Jan 10, 11:45 AM",
+        },
+        {
+            "plant_name": "Bhadla Solar Park",
+            "plant_type": "Solar Farm",
+            "installation_date": "2018-09-10",
+            "address": "Bhadla Phase 1",
+            "country": "India",
+            "state": "Rajasthan",
+            "city": "Phalodi",
+            "latitude": 27.53,
+            "longitude": 71.91,
+            "status": "active",
+            "todayKwh": "250489 Kwh",
+            "totalKwh": "12.3M Kwh",
+            "capacityKwh": "500000 Kwh",
+            "lastUpdated": "Jan 10, 12:00 PM",
+        },
+        {
+            "plant_name": "Pune Industrial",
+            "plant_type": "Commercial Microgrid",
+            "installation_date": "2023-01-05",
+            "address": "MIDC Area",
+            "country": "India",
+            "state": "Maharashtra",
+            "city": "Pune",
+            "latitude": 18.52,
+            "longitude": 73.85,
+            "status": "expired",
+            "todayKwh": "0 Kwh",
+            "totalKwh": "230K Kwh",
+            "capacityKwh": "15000 Kwh",
+            "lastUpdated": "Jan 08, 4:00 PM",
+        },
+        {
+            "plant_name": "Bengaluru IT Park",
+            "plant_type": "Rooftop Array",
+            "installation_date": "2021-04-20",
+            "address": "Whitefield Phase 2",
+            "country": "India",
+            "state": "Karnataka",
+            "city": "Bengaluru",
+            "latitude": 12.97,
+            "longitude": 77.59,
+            "status": "partiallyActive",
+            "todayKwh": "18500 Kwh",
+            "totalKwh": "800K Kwh",
+            "capacityKwh": "30000 Kwh",
+            "lastUpdated": "Jan 10, 8:45 AM",
         }
     ])
 
@@ -53,6 +141,40 @@ async def seed():
         {"type": "SLMS", "count": 4, "flex": 2},
         {"type": "Inverters", "count": 8, "flex": 4},
     ])
+
+    from datetime import datetime, timedelta
+    import random
+
+    # Add Inverters
+    print("Seeding inverters...")
+    await db["inverters"].delete_many({})
+    
+    plants_cursor = db["plants"].find({})
+    all_plants = await plants_cursor.to_list(length=None)
+    
+    if all_plants:
+        inverters_data = []
+        manufacturers = ["Mindra", "Growatt", "SMA", "Huawei", "Sungrow"]
+        categories = ["inverter", "string inverter", "central inverter"]
+        statuses = ["active", "active", "active", "active", "alert", "partiallyActive", "expired"]
+        
+        for i in range(25):
+            plant = random.choice(all_plants)
+            today_gen = round(random.uniform(50, 500), 2)
+            total_gen = round(today_gen * random.uniform(100, 500), 2)
+            
+            inverters_data.append({
+                "plant_id": plant["_id"],
+                "device_name": f"{plant.get('plant_name', 'Plant')} Inv {i+1}",
+                "manufacturer": random.choice(manufacturers),
+                "today_generation": today_gen,
+                "total_generation": total_gen,
+                "status": random.choice(statuses),
+                "category": random.choice(categories),
+                "lastUpdated": datetime.now().strftime("%b %d, %I:%M %p")
+            })
+            
+        await db["inverters"].insert_many(inverters_data)
 
     # 4. Seed Overview/Sustability Stats
     print("Seeding overview data...")

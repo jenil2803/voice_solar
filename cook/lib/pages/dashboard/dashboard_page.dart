@@ -27,6 +27,7 @@ class _DashboardPageState extends State<DashboardPage> {
   bool _isLoading = true;
   String? _error;
   ChartPeriodType _currentPeriod = ChartPeriodType.monthly;
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -157,26 +158,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0EA5E9).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.calendar_today, size: 16, color: Color(0xFF0EA5E9)),
-                        const SizedBox(width: 8),
-                        Text(
-                          DateTime.now().toString().split(' ')[0], // Simple date
-                          style: const TextStyle(
-                            color: Color(0xFF0EA5E9),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+
                 ],
               ),
               const SizedBox(height: 32),
@@ -184,6 +166,39 @@ class _DashboardPageState extends State<DashboardPage> {
               LayoutBuilder(
                 builder: (context, constraints) {
                   bool isLarge = constraints.maxWidth > 1200;
+                  bool isSmall = constraints.maxWidth < 900;
+                  bool isMobile = constraints.maxWidth < 600;
+
+                  if (isSmall) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        EnergyProductionCard(data: data.energyProduction),
+                        const SizedBox(height: 24),
+                        TotalDevicesCard(devices: data.devices),
+                        const SizedBox(height: 24),
+                        if (isMobile) ...[
+                          PlantsStatusCard(data: data.plantsStatus),
+                          const SizedBox(height: 24),
+                          NetZeroCard(data: data.netZero),
+                        ] else
+                          Row(
+                            children: [
+                              Expanded(child: PlantsStatusCard(data: data.plantsStatus)),
+                              const SizedBox(width: 16),
+                              Expanded(child: NetZeroCard(data: data.netZero)),
+                            ],
+                          ),
+                        const SizedBox(height: 24),
+                        EnergyGenerationChart(
+                          data: data.chartData,
+                          onPeriodChanged: _updatePeriod,
+                        ),
+                        const SizedBox(height: 24),
+                        PlantsDetailsTable(plants: data.plants),
+                      ],
+                    );
+                  }
 
                   return Column(
                     children: [

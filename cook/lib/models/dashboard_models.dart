@@ -163,6 +163,8 @@ class PlantDetail {
   final String totalKwh;
   final String capacityKwh;
   final String lastUpdated;
+  final String city;
+  final String state;
 
   const PlantDetail({
     required this.name,
@@ -171,9 +173,11 @@ class PlantDetail {
     required this.totalKwh,
     required this.capacityKwh,
     required this.lastUpdated,
+    required this.city,
+    required this.state,
   });
 
-  /// Parse from API. Expect: { name, status, todayKwh, totalKwh, capacityKwh, lastUpdated }
+  /// Parse from API. Expect: { name, status, todayKwh, totalKwh, capacityKwh, lastUpdated, city, state }
   /// status: 'active' | 'alert' | 'partiallyActive' | 'expired'
   factory PlantDetail.fromJson(Map<String, dynamic> json) {
     final statusStr = json['status'] as String? ?? 'active';
@@ -187,6 +191,8 @@ class PlantDetail {
       totalKwh: json['totalKwh'] as String? ?? '0',
       capacityKwh: json['capacityKwh'] as String? ?? '0',
       lastUpdated: json['lastUpdated'] as String? ?? '',
+      city: json['city'] as String? ?? 'N/A',
+      state: json['state'] as String? ?? 'N/A',
     );
   }
 }
@@ -237,6 +243,49 @@ class DashboardData {
       plants: plantsList
           .map((e) => PlantDetail.fromJson(e as Map<String, dynamic>))
           .toList(),
+    );
+  }
+}
+
+/// Single inverter detail for the inverters page.
+class InverterDetail {
+  final String id;
+  final String plantId;
+  final String deviceName;
+  final String manufacturer;
+  final String category;
+  final double todayGeneration;
+  final double totalGeneration;
+  final PlantStatus status;
+  final String lastUpdated;
+
+  const InverterDetail({
+    required this.id,
+    required this.plantId,
+    required this.deviceName,
+    required this.manufacturer,
+    required this.category,
+    required this.todayGeneration,
+    required this.totalGeneration,
+    required this.status,
+    required this.lastUpdated,
+  });
+
+  factory InverterDetail.fromJson(Map<String, dynamic> json) {
+    final statusStr = json['status'] as String? ?? 'active';
+    return InverterDetail(
+      id: json['_id'] as String? ?? '',
+      plantId: json['plant_id'] as String? ?? '',
+      deviceName: json['device_name'] as String? ?? 'Unknown Inv',
+      manufacturer: json['manufacturer'] as String? ?? 'Unknown Make',
+      category: json['category'] as String? ?? 'inverter',
+      todayGeneration: (json['today_generation'] as num?)?.toDouble() ?? 0.0,
+      totalGeneration: (json['total_generation'] as num?)?.toDouble() ?? 0.0,
+      status: PlantStatus.values.firstWhere(
+        (e) => e.name == statusStr,
+        orElse: () => PlantStatus.active,
+      ),
+      lastUpdated: json['lastUpdated'] as String? ?? 'N/A',
     );
   }
 }
