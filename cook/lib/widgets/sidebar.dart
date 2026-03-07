@@ -71,13 +71,6 @@ class Sidebar extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          _NavItem(
-            assetIcon: 'assets/icons/sync_icon.png',
-            isActive: location.startsWith('/sync'),
-            onTap: () {},
-          ),
-
-          const SizedBox(height: 20),
 
           _NavItem(
             assetIcon: 'assets/icons/sensors_icon.png',
@@ -102,23 +95,7 @@ class Sidebar extends StatelessWidget {
 
           const Spacer(),
 
-          // Bottom Icons
-          _NavItem(
-            icon: LucideIcons.bell,
-            isActive: false,
-            onTap: () {},
-            hasBadge: true,
-          ),
 
-          const SizedBox(height: 20),
-
-          _NavItem(
-            icon: LucideIcons.userPlus,
-            isActive: false,
-            onTap: () {},
-          ),
-
-          const SizedBox(height: 32),
         ],
       ),
     );
