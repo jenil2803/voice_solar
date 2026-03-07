@@ -86,7 +86,11 @@ class _PlantsDetailsTableState extends State<PlantsDetailsTable> {
         children: [
           Padding(
             padding: const EdgeInsets.all(24.0),
-            child: Row(
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 const Text(
                   'Plants Details',
@@ -96,61 +100,65 @@ class _PlantsDetailsTableState extends State<PlantsDetailsTable> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Spacer(),
-                PopupMenuButton<PlantStatus>(
-                  icon: Icon(
-                    Icons.tune,
-                    color: _selectedStatuses.length < 4
-                        ? const Color(0xFF0EA5E9)
-                        : const Color(0xFF64748B),
-                  ),
-                  tooltip: 'Filter by Status',
-                  onSelected: (status) {
-                    setState(() {
-                      if (_selectedStatuses.contains(status)) {
-                        if (_selectedStatuses.length > 1) {
-                          _selectedStatuses.remove(status);
-                        }
-                      } else {
-                        _selectedStatuses.add(status);
-                      }
-                    });
-                  },
-                  itemBuilder: (context) {
-                    return PlantStatus.values.map((status) {
-                      final isSelected = _selectedStatuses.contains(status);
-                      return CheckedPopupMenuItem<PlantStatus>(
-                        value: status,
-                        checked: isSelected,
-                        child: Text(status.name[0].toUpperCase() + status.name.substring(1)),
-                      );
-                    }).toList();
-                  },
-                ),
-                const SizedBox(width: 8),
-                SizedBox(
-                  width: 240,
-                  height: 40,
-                  child: TextField(
-                    controller: _searchController,
-                    style: const TextStyle(fontSize: 14),
-                    decoration: InputDecoration(
-                      hintText: 'Search plants...',
-                      hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
-                      prefixIcon: const Icon(Icons.search, size: 18, color: Color(0xFF94A3B8)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                      filled: true,
-                      fillColor: const Color(0xFFF8FAFC),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    PopupMenuButton<PlantStatus>(
+                      icon: Icon(
+                        Icons.tune,
+                        color: _selectedStatuses.length < 4
+                            ? const Color(0xFF0EA5E9)
+                            : const Color(0xFF64748B),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
+                      tooltip: 'Filter by Status',
+                      onSelected: (status) {
+                        setState(() {
+                          if (_selectedStatuses.contains(status)) {
+                            if (_selectedStatuses.length > 1) {
+                              _selectedStatuses.remove(status);
+                            }
+                          } else {
+                            _selectedStatuses.add(status);
+                          }
+                        });
+                      },
+                      itemBuilder: (context) {
+                        return PlantStatus.values.map((status) {
+                          final isSelected = _selectedStatuses.contains(status);
+                          return CheckedPopupMenuItem<PlantStatus>(
+                            value: status,
+                            checked: isSelected,
+                            child: Text(status.name[0].toUpperCase() + status.name.substring(1)),
+                          );
+                        }).toList();
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    SizedBox(
+                      width: 240,
+                      height: 40,
+                      child: TextField(
+                        controller: _searchController,
+                        style: const TextStyle(fontSize: 14),
+                        decoration: InputDecoration(
+                          hintText: 'Search plants...',
+                          hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+                          prefixIcon: const Icon(Icons.search, size: 18, color: Color(0xFF94A3B8)),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                          filled: true,
+                          fillColor: const Color(0xFFF8FAFC),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),

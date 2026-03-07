@@ -62,10 +62,14 @@ class _InvertersPageState extends State<InvertersPage> {
             future: _invertersFuture,
             builder: (context, snapshot) {
               int totalCount = snapshot.data?.length ?? 0;
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              return Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text(
                         'Inverters',
@@ -87,6 +91,7 @@ class _InvertersPageState extends State<InvertersPage> {
                     ],
                   ),
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       OutlinedButton.icon(
                         onPressed: () {

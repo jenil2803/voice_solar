@@ -166,6 +166,39 @@ class _DashboardPageState extends State<DashboardPage> {
               LayoutBuilder(
                 builder: (context, constraints) {
                   bool isLarge = constraints.maxWidth > 1200;
+                  bool isSmall = constraints.maxWidth < 900;
+                  bool isMobile = constraints.maxWidth < 600;
+
+                  if (isSmall) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        EnergyProductionCard(data: data.energyProduction),
+                        const SizedBox(height: 24),
+                        TotalDevicesCard(devices: data.devices),
+                        const SizedBox(height: 24),
+                        if (isMobile) ...[
+                          PlantsStatusCard(data: data.plantsStatus),
+                          const SizedBox(height: 24),
+                          NetZeroCard(data: data.netZero),
+                        ] else
+                          Row(
+                            children: [
+                              Expanded(child: PlantsStatusCard(data: data.plantsStatus)),
+                              const SizedBox(width: 16),
+                              Expanded(child: NetZeroCard(data: data.netZero)),
+                            ],
+                          ),
+                        const SizedBox(height: 24),
+                        EnergyGenerationChart(
+                          data: data.chartData,
+                          onPeriodChanged: _updatePeriod,
+                        ),
+                        const SizedBox(height: 24),
+                        PlantsDetailsTable(plants: data.plants),
+                      ],
+                    );
+                  }
 
                   return Column(
                     children: [

@@ -33,64 +33,76 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            spacing: 24,
+            runSpacing: 16,
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              GestureDetector(
-                onTap: () => setState(() => isGenerationSelected = true),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Energy Generation',
-                      style: TextStyle(
-                        color: isGenerationSelected
-                            ? const Color(0xFF0EA5E9)
-                            : const Color(0xFF64748B),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: () => setState(() => isGenerationSelected = true),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Energy Generation',
+                          style: TextStyle(
+                            color: isGenerationSelected
+                                ? const Color(0xFF0EA5E9)
+                                : const Color(0xFF64748B),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (isGenerationSelected)
+                          Container(
+                            height: 2,
+                            width: 40,
+                            margin: const EdgeInsets.only(top: 4),
+                            color: const Color(0xFF0EA5E9),
+                          ),
+                      ],
                     ),
-                    if (isGenerationSelected)
-                      Container(
-                        height: 2,
-                        width: 40,
-                        margin: const EdgeInsets.only(top: 4),
-                        color: const Color(0xFF0EA5E9),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 24),
-              GestureDetector(
-                onTap: () => setState(() => isGenerationSelected = false),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Revenue',
-                      style: TextStyle(
-                        color: !isGenerationSelected
-                            ? const Color(0xFF0EA5E9)
-                            : const Color(0xFF64748B),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  ),
+                  const SizedBox(width: 24),
+                  GestureDetector(
+                    onTap: () => setState(() => isGenerationSelected = false),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Revenue',
+                          style: TextStyle(
+                            color: !isGenerationSelected
+                                ? const Color(0xFF0EA5E9)
+                                : const Color(0xFF64748B),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (!isGenerationSelected)
+                          Container(
+                            height: 2,
+                            width: 24,
+                            margin: const EdgeInsets.only(top: 4),
+                            color: const Color(0xFF0EA5E9),
+                          ),
+                      ],
                     ),
-                    if (!isGenerationSelected)
-                      Container(
-                        height: 2,
-                        width: 24,
-                        margin: const EdgeInsets.only(top: 4),
-                        color: const Color(0xFF0EA5E9),
-                      ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const Spacer(),
-              _buildDropdown(widget.data.periodLabel),
-              const SizedBox(width: 12),
-              _buildToggleButtons(widget.data.periodType),
-
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildDropdown(widget.data.periodLabel),
+                  const SizedBox(width: 12),
+                  _buildToggleButtons(widget.data.periodType),
+                ],
+              ),
             ],
           ),
           const SizedBox(height: 24),
