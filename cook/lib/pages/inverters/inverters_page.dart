@@ -16,6 +16,14 @@ class _InvertersPageState extends State<InvertersPage> {
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
+  // Filter state
+  Set<String> _selectedCategories = {};
+  Set<String> _selectedManufacturers = {};
+  
+  // Available filter options (derived from data)
+  List<String> _availableCategories = [];
+  List<String> _availableManufacturers = [];
+
   @override
   void initState() {
     super.initState();
@@ -81,7 +89,11 @@ class _InvertersPageState extends State<InvertersPage> {
                   Row(
                     children: [
                       OutlinedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (snapshot.hasData) {
+                            _showFilterDialog(context, snapshot.data!);
+                          }
+                        },
                         icon: const Icon(Icons.filter_alt_outlined,
                             color: Color(0xFF0EA5E9)),
                         label: const Text(
@@ -248,13 +260,14 @@ class _InvertersPageState extends State<InvertersPage> {
 
                         final allInverters = snapshot.data!;
                         final filteredInverters = allInverters.where((inv) {
-                          final nameMatch = inv.deviceName
-                              .toLowerCase()
-                              .contains(_searchQuery);
-                          final makerMatch = inv.manufacturer
-                              .toLowerCase()
-                              .contains(_searchQuery);
-                          return nameMatch || makerMatch;
+                          final nameMatch = inv.deviceName.toLowerCase().contains(_searchQuery);
+                          final makerMatch = inv.manufacturer.toLowerCase().contains(_searchQuery);
+                          final searchMatch = nameMatch || makerMatch;
+                          
+                          final categoryMatch = _selectedCategories.isEmpty || _selectedCategories.contains(inv.category);
+                          final manufacturerMatch = _selectedManufacturers.isEmpty || _selectedManufacturers.contains(inv.manufacturer);
+                          
+                          return searchMatch && categoryMatch && manufacturerMatch;
                         }).toList();
 
                         if (filteredInverters.isEmpty) {
@@ -369,6 +382,109 @@ class _InvertersPageState extends State<InvertersPage> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showFilterDialog(BuildContext context, List<InverterDetail> inverters) {
+    if (_availableCategories.isEmpty) {
+      _availableCategories = inverters.map((e) => e.category).toSet().toList()..sort();
+      _availableManufacturers = inverters.map((e) => e.manufacturer).toSet().toList()..sort();
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Filter Inverters'),
+              titlePadding: const EdgeInsets.all(24).copyWith(bottom: 0),
+              contentPadding: const EdgeInsets.all(24),
+              content: SizedBox(
+                width: 400,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Category', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: _availableCategories.map((cat) {
+                          final isSelected = _selectedCategories.contains(cat);
+                          return FilterChip(
+                            label: Text(cat),
+                            selected: isSelected,
+                            onSelected: (selected) {
+                              setDialogState(() {
+                                if (selected) {
+                                  _selectedCategories.add(cat);
+                                } else {
+                                  _selectedCategories.remove(cat);
+                                }
+                              });
+                            },
+                            selectedColor: const Color(0xFF0EA5E9).withValues(alpha: 0.2),
+                            checkmarkColor: const Color(0xFF0EA5E9),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text('Manufacturer', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: _availableManufacturers.map((mfg) {
+                          final isSelected = _selectedManufacturers.contains(mfg);
+                          return FilterChip(
+                            label: Text(mfg),
+                            selected: isSelected,
+                            onSelected: (selected) {
+                              setDialogState(() {
+                                if (selected) {
+                                  _selectedManufacturers.add(mfg);
+                                } else {
+                                  _selectedManufacturers.remove(mfg);
+                                }
+                              });
+                            },
+                             selectedColor: const Color(0xFF0EA5E9).withValues(alpha: 0.2),
+                             checkmarkColor: const Color(0xFF0EA5E9),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actionsPadding: const EdgeInsets.all(24).copyWith(top: 0),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    setDialogState(() {
+                      _selectedCategories.clear();
+                      _selectedManufacturers.clear();
+                    });
+                  },
+                  child: const Text('Clear', style: TextStyle(color: Color(0xFF64748B))),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    // Update main state to trigger rebuild of ListView
+                    setState(() {});
+                    Navigator.of(context).pop();
+                  },
+                  style: FilledButton.styleFrom(backgroundColor: const Color(0xFF0EA5E9)),
+                  child: const Text('Apply Details'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }
