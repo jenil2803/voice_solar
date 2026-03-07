@@ -85,11 +85,7 @@ class Sidebar extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          _NavItem(
-            icon: LucideIcons.bookOpen,
-            isActive: location.startsWith('/reports'),
-            onTap: () => context.go('/reports'),
-          ),
+          
 
           const SizedBox(height: 20),
 

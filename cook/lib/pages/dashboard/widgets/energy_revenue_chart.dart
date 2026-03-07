@@ -206,7 +206,9 @@ class _EnergyGenerationChartState extends State<EnergyGenerationChart> {
                           borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                           backDrawRodData: BackgroundBarChartRodData(
                             show: true,
-                            toY: isGenerationSelected ? widget.data.maxY : 1000,
+                            toY: isGenerationSelected 
+                                ? widget.data.maxY
+                                : widget.data.maxY,  
                             color: const Color(0xFFF1F5F9),
                           ),
                         ),
