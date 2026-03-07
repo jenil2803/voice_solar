@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'services/auth_service.dart';
 import 'layout/main_layout.dart';
 import 'pages/auth/login_page.dart';
 import 'pages/dashboard/dashboard_page.dart';
@@ -15,6 +16,15 @@ final shellNavigatorKey = GlobalKey<NavigatorState>();
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: '/login',
+  refreshListenable: authService,
+  redirect: (context, state) {
+    final bool loggedIn = authService.isAuthenticated;
+    final bool isLoggingIn = state.matchedLocation == '/login';
+
+    if (!loggedIn && !isLoggingIn) return '/login';
+    if (loggedIn && isLoggingIn) return '/';
+    return null;
+  },
   routes: [
     GoRoute(
       path: '/login',

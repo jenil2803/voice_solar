@@ -92,7 +92,10 @@ class Sidebar extends StatelessWidget {
           _NavItem(
             assetIcon: 'assets/icons/logout_outlined_icon.png',
             isActive: false,
-            onTap: () {},
+            onTap: () {
+              authService.logout();
+              context.go('/login');
+            },
           ),
 
           const Spacer(),
