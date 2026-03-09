@@ -1,3 +1,4 @@
+import certifi
 from motor.motor_asyncio import AsyncIOMotorClient
 
 # MongoDB Connection URL
@@ -6,8 +7,8 @@ MONGO_URL = "mongodb+srv://solaradmin:strongpassword123@solar-monitoring-cluste.
 # Database Name
 DATABASE_NAME = "solar_monitoring_system"
 
-# Create MongoDB Client
-client = AsyncIOMotorClient(MONGO_URL)
+# Create MongoDB Client with certifi CA bundle to fix SSL handshake errors
+client = AsyncIOMotorClient(MONGO_URL, tlsCAFile=certifi.where())
 
 # Select Database
 db = client[DATABASE_NAME]

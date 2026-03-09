@@ -1,17 +1,99 @@
-# cook
+# Voice Solar ☀️
 
-A new Flutter project.
+**Voice Solar** is an intelligent solar plant monitoring system that transforms raw sensor data into actionable insights using AI. Built for the **HakaMined Hackathon 2026**, it demonstrates the power of AI in renewable energy management.
 
-## Getting Started
+## 🚀 Features
 
-This project is a starting point for a Flutter application.
+- **AI-Powered Insights**: Analyzes plant performance and generates natural language summaries
+- **Real-Time Monitoring**: Tracks key metrics like power generation, voltage, and current
+- **Smart Alerts**: Detects anomalies and notifies users of potential issues
+- **Voice-Enabled**: Future-ready for voice command integration
+- **Modern UI**: Clean, responsive interface with dark mode support
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Tech Stack
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+### Backend
+- **Framework**: FastAPI
+- **Database**: MongoDB (via Motor)
+- **AI**: Custom Python logic for data analysis
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Frontend
+- **Framework**: Flutter
+- **State Management**: Riverpod
+- **Routing**: GoRouter
+- **HTTP**: Dio
+
+## 📂 Project Structure
+
+```
+voice_solar/
+├── Backend/              # FastAPI backend services
+│   ├── main.py           # API entry point
+│   ├── services/         # Business logic
+│   └── models/           # Data models
+├── cook/                 # Flutter frontend
+│   ├── lib/
+│   │   ├── pages/        # UI screens
+│   │   ├── services/     # API clients
+│   │   └── widgets/      # Reusable components
+│   └── pubspec.yaml      # Dependencies
+└── README.md             # Project documentation
+```
+
+## 🔌 API Endpoints
+
+### Authentication
+- `POST /user/login/` - User login
+- `POST /user/register/` - User registration
+
+### Dashboard
+- `GET /dashboard?period={period}` - Get plant performance data
+
+### Inverters
+- `GET /inverters/` - List all inverters
+- `GET /inverters/{id}/` - Get inverter details
+
+### Sensors
+- `GET /sensors/` - List all sensors
+- `GET /sensors/{id}/` - Get sensor details
+
+## 🏃 Getting Started
+
+### Prerequisites
+- Python 3.8+
+- Flutter 3.0+
+- MongoDB instance
+
+### Backend Setup
+
+1. Navigate to the backend directory:
+   ```bash
+   cd Backend
+   ```
+
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Run the server:
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd cook
+   ```
+
+2. Install dependencies:
+   ```bash
+   flutter pub get
+   ```
+
+3. Run the application:
+   ```bash
+   flutter run
+   ```
