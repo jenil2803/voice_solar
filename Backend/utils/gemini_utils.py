@@ -61,7 +61,7 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 def generate_content(prompt):
     try:
         response = client.models.generate_content(
-            model="gemini-3-flash-preview",
+            model="gemini-2.5-flash",
             contents=prompt,
         )
         return extract_json(response.text)
